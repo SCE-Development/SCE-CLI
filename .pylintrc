@@ -1,0 +1,4 @@
+[MASTER]
+ignore=README.md
+[MESSAGES CONTROL]
+disable=missing-docstring
