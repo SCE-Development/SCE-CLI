@@ -24,9 +24,9 @@ class SceSetupTool:
         """
         devnull = open(os.devnull, 'wb')
         software = subprocess.check_call(command, stdout=devnull, stderr=subprocess.STDOUT, shell=True)
-        if software == 0:
+        try:
             self.color.print_yellow(name + " found", True)
-        else:
+        except subprocess.CalledProcessError:
             self.color.print_red(name + " not found", True)
             print("visit here to install: ")
             self.color.print_purple(link, True)
