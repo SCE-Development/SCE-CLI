@@ -23,7 +23,7 @@ class SceSetupTool:
             link (string): link to the site to install the software
         """
         devnull = open(os.devnull, 'wb')
-        software = subprocess.check_call(command, stdout=devnull, stderr=subprocess.STDOUT)
+        software = subprocess.check_call(command, stdout=devnull, stderr=subprocess.STDOUT, shell=True)
         if software == 0:
             self.color.print_yellow(name + " found", True)
         else:
@@ -50,10 +50,10 @@ class SceSetupTool:
             self.color.print_pink("sce-rpc directory found", True)
             os.chdir("sce-rpc")
             devnull = open(os.devnull, 'wb')
-            subprocess.check_call("git checkout master", stdout=devnull, stderr=subprocess.STDOUT)
-            subprocess.check_call("git fetch origin", stdout=devnull, stderr=subprocess.STDOUT)
+            subprocess.check_call("git checkout master", stdout=devnull, stderr=subprocess.STDOUT, shell=True)
+            subprocess.check_call("git fetch origin", stdout=devnull, stderr=subprocess.STDOUT, shell=True)
             subprocess.check_call("git reset --hard origin/master",
-                                  stdout=devnull, stderr=subprocess.STDOUT)
+                                  stdout=devnull, stderr=subprocess.STDOUT, shell=True)
             os.chdir("..")
         else:
             os.system("git clone https://github.com/SCE-Development/sce-rpc")
