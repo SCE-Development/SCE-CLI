@@ -1,5 +1,5 @@
-from tools.setup import SceSetupTool
 import argparse
+from tools.setup import SceSetupTool
 
 setup = SceSetupTool()
 parser = argparse.ArgumentParser()
