@@ -12,6 +12,7 @@ class SceSetupTool:
     """
     operating = ""
     color = Colors()
+    devnull = open(os.devnull, 'wb')
 
     def check_installation(self, name, command, link):
         """
@@ -25,10 +26,9 @@ class SceSetupTool:
                 that the command line will execute
             link (string): link to the site to install the software
         """
-        devnull = open(os.devnull, 'wb')
-        subprocess.check_call(command, stdout=devnull,
-                              stderr=subprocess.STDOUT, shell=True)
         try:
+            subprocess.check_call(command, stdout=self.devnull,
+                                  stderr=subprocess.STDOUT, shell=True)
             self.color.print_yellow(name + " found", True)
         except subprocess.CalledProcessError:
             self.color.print_red(name + " not found", True)
@@ -44,7 +44,7 @@ class SceSetupTool:
         This method checks the user's os and stores it into a class variable
         """
         self.operating = platform.system()
-        self.color.print_purple(self.operating, True)
+        self.color.print_purple(f'Detected OS: {self.operating}', True)
 
     def setup_rpc(self):
         """
@@ -53,23 +53,15 @@ class SceSetupTool:
         if os.path.isdir("sce-rpc"):
             self.color.print_pink("sce-rpc directory found", True)
             os.chdir("sce-rpc")
-            devnull = open(os.devnull, 'wb')
-            subprocess.check_call("git checkout master",
-                                  stdout=devnull, stderr=subprocess.STDOUT,
-                                  shell=True)
-            subprocess.check_call("git fetch origin",
-                                  stdout=devnull, stderr=subprocess.STDOUT,
-                                  shell=True)
-            subprocess.check_call("git reset --hard origin/master",
-                                  stdout=devnull, stderr=subprocess.STDOUT,
-                                  shell=True)
-            os.chdir("..")
         else:
             os.system("git clone https://github.com/SCE-Development/sce-rpc")
-            if self.operating == "Windows":
-                os.system("setup.bat")
-            else:
-                os.system("setup.sh")
+            os.chdir("sce-rpc")
+
+        if self.operating == "Windows":
+            os.system("setup.bat")
+        else:
+            os.system("./setup.sh")
+        os.chdir("..")
 
     def check_directory(self, name):
         """
@@ -82,11 +74,10 @@ class SceSetupTool:
         if os.path.isdir(name):
             self.color.print_pink(name + " directory found", True)
         else:
-            self.color.print_red(name +
-                                 " directory not found, cloning for you",
-                                 True)
-            os.system("git clone https://github.com/SCE-Development/" + name)
-            os.system("cd " + name)
+            self.color.print_red(
+                name + " directory not found, cloning for you", True)
+            subprocess.check_call("git clone https://github.com/SCE-Development/" + name,
+                                  stderr=subprocess.STDOUT, shell=True)
 
     def check_docker(self):
         """
@@ -103,14 +94,87 @@ class SceSetupTool:
                                 "https://www.mongodb.com/"
                                 + "try/download/community")
 
+    def write_alias_to_file(self, file_name):
+        sce_path = os.getcwd()
+        try:
+            subprocess.check_call(
+                f'grep -rl \"alias sce=\" {file_name}', stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+        except subprocess.CalledProcessError:
+            with open(file_name, 'a') as file:
+                file.write('\n')
+                file.write(f"SCE_PATH={sce_path}")
+                file.write('\n')
+                file.write(f'alias sce="python3 {sce_path}/sce.py"')
+                file.write('\n')
+
+    def add_alias_unix(self):
+        HOME_PATH = os.environ["HOME"]
+        BASHRC_PATH = f'{HOME_PATH}/.bashrc'
+        if self.operating == "Darwin":
+            ZSHRC_PATH = f"{HOME_PATH}/.zshrc"
+            if os.path.isfile(BASHRC_PATH):
+                self.write_alias_to_file(BASHRC_PATH)
+                self.write_alias_to_file('dookie')
+            if os.path.isfile(ZSHRC_PATH):
+                self.write_alias_to_file(ZSHRC_PATH)
+        elif self.operating == "Linux":
+            BASH_PROFILE_PATH = f"{HOME_PATH}/.bash_profile"
+            if os.path.isfile(BASHRC_PATH):
+                self.write_alias_to_file(BASHRC_PATH)
+            elif os.path.isfile(BASH_PROFILE_PATH):
+                self.write_alias_to_file(BASH_PROFILE_PATH)
+
+    def add_alias_windows(self):
+        subprocess.check_call("pip install cx_Freeze",
+                              stderr=subprocess.STDOUT, shell=True)
+        subprocess.check_call("pip install idna",
+                              stderr=subprocess.STDOUT, shell=True)
+        subprocess.check_call("py setup.py build",
+                              stderr=subprocess.STDOUT, shell=True)
+        self.color.print_pink(
+            "enter the build folder and locate the exe, then use the path to the exe to set your own path", True)
+
+    def add_sce_alias(self):
+        self.check_os()
+        if self.operating == "Windows":
+            self.add_alias_windows()
+        else:
+            self.add_alias_unix()
+
     def setup_core_v4(self):
         """
         This method checks for the corev4 directory
         """
         self.check_directory("Core-v4")
+        os.chdir("Core-v4")
+        subprocess.check_call(
+            "npm install", stderr=subprocess.STDOUT, shell=True)
+        if self.operating == "Windows":
+            subprocess.check_call("py setup.py", stdout=subprocess.PIPE,
+                                  stderr=subprocess.STDOUT, shell=True)
+        else:
+            subprocess.check_call("python3 setup.py", stdout=subprocess.PIPE,
+                                  stderr=subprocess.STDOUT, shell=True)
+        subprocess.check_call("npm run server-install",
+                              stderr=subprocess.STDOUT, shell=True)
+        os.chdir("..")
 
     def setup_discord_bot(self):
         """
         This method checks for the discord bot directory
         """
         self.check_directory("SCE-discord-bot")
+        os.chdir("SCE-discord-bot")
+        subprocess.check_call("npm install",
+                              stderr=subprocess.STDOUT, shell=True)
+        os.chdir("..")
+
+    def setup(self):
+        self.check_os()
+        self.check_docker()
+        self.check_mongo()
+        self.add_sce_alias()
+
+        self.setup_rpc()
+        self.setup_core_v4()
+        self.setup_discord_bot()
