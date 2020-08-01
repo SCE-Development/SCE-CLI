@@ -27,9 +27,7 @@ class SceDockerHandler:
         else:
             for service in self.services:
                 if service == 'print':
-                    print('Available Services (case sensitive):')
-                    for key in self.container_dict:
-                        print('\t', key)
+                    self.print_usage()
                 elif service not in self.container_dict:
                     print(
                         f"{service} does not exist. If you would like to see the list of available services type: run -s print")
@@ -43,6 +41,11 @@ class SceDockerHandler:
                     self.run_mongodb()
                 else:
                     subprocess.run(self.container_dict[service])
+
+    def print_usage(self):
+        print('Available Services (case sensitive):')
+        for key in self.container_dict:
+            print('\t', key)
 
     def run_mongodb(self):
         if os.path.exists('~/data/db'):
