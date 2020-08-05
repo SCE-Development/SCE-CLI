@@ -3,3 +3,5 @@ SCE-RPC
 SCE-discord-bot
 *.pyc
 .idea
+build
+_pycache_
