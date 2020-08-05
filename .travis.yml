@@ -1,5 +1,5 @@
 language: python
 install:
-  - py -m pip install flake8
+  - python -m pip install flake8
 script:
   - flake8
