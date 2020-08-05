@@ -177,6 +177,6 @@ To use the sce command line tool, add this to your path:
 
         self.add_sce_alias()
         self.color.print_yellow("""
-The npm install step in the three projects may have created some unwanted files.
+The npm install step in the three projects may have created unwanted files.
 Open the projects and delete any unfamiliar untracked files.
                                 """)
