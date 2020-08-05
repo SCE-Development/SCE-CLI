@@ -177,7 +177,6 @@ To use the sce command line tool, add this to your path:
 
         self.add_sce_alias()
         self.color.print_yellow("""
-Make sure you you cd into Core-v4/api
-and then ls. After then delete the
-folders.
+The npm install step in the three projects may have created some unwanted files.
+Open the projects and delete any unfamiliar untracked files.
                                 """)

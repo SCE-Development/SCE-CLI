@@ -11,6 +11,3 @@ args = parser.parse_args()
 if args.command == 'setup':
     setup = SceSetupTool()
     setup.setup()
-elif args.command == 'test':
-    setup = SceSetupTool()
-    setup.add_alias_windows()
