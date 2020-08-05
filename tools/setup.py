@@ -15,16 +15,19 @@ class SceSetupTool:
 
     def check_installation(self, name, command, link):
         """
-        This method is called to check if the proper software is installed
-        if the software is installed the console will print out a message and move on
-        if not then the console will redirect the user to the site to install the softare
+        This method is called to check if the proper software is
+        installed if the software is installed the console will
+        print out a message and move on if not then the console
+        will redirect the user to the site to install the softare
             Parameters:
             name (string): name of the software to check for
-            command (string): the name of the command that the command line wiill execute
+            command (string): the name of the command
+                that the command line will execute
             link (string): link to the site to install the software
         """
         devnull = open(os.devnull, 'wb')
-        subprocess.check_call(command, stdout=devnull, stderr=subprocess.STDOUT, shell=True)
+        subprocess.check_call(command, stdout=devnull,
+                              stderr=subprocess.STDOUT, shell=True)
         try:
             self.color.print_yellow(name + " found", True)
         except subprocess.CalledProcessError:
@@ -51,12 +54,15 @@ class SceSetupTool:
             self.color.print_pink("sce-rpc directory found", True)
             os.chdir("sce-rpc")
             devnull = open(os.devnull, 'wb')
-            subprocess.check_call("git checkout master", stdout=devnull, stderr=subprocess.STDOUT,
+            subprocess.check_call("git checkout master",
+                                  stdout=devnull, stderr=subprocess.STDOUT,
                                   shell=True)
-            subprocess.check_call("git fetch origin", stdout=devnull, stderr=subprocess.STDOUT,
+            subprocess.check_call("git fetch origin",
+                                  stdout=devnull, stderr=subprocess.STDOUT,
                                   shell=True)
             subprocess.check_call("git reset --hard origin/master",
-                                  stdout=devnull, stderr=subprocess.STDOUT, shell=True)
+                                  stdout=devnull, stderr=subprocess.STDOUT,
+                                  shell=True)
             os.chdir("..")
         else:
             os.system("git clone https://github.com/SCE-Development/sce-rpc")
@@ -76,7 +82,9 @@ class SceSetupTool:
         if os.path.isdir(name):
             self.color.print_pink(name + " directory found", True)
         else:
-            self.color.print_red(name + " directory not found, cloning for you", True)
+            self.color.print_red(name +
+                                 " directory not found, cloning for you",
+                                 True)
             os.system("git clone https://github.com/SCE-Development/" + name)
             os.system("cd " + name)
 
@@ -84,14 +92,16 @@ class SceSetupTool:
         """
         This method is used to check for docker software
         """
-        self.check_installation("docker", "docker --version", "https://docs.docker.com/desktop/")
+        self.check_installation("docker", "docker --version",
+                                "https://docs.docker.com/desktop/")
 
     def check_mongo(self):
         """
         This method checks for mongo installation
         """
         self.check_installation("mongo", "mongo --version",
-                                "https://www.mongodb.com/try/download/community")
+                                "https://www.mongodb.com/"
+                                + "try/download/community")
 
     def setup_core_v4(self):
         """
