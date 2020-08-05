@@ -75,15 +75,9 @@ class SceSetupTool:
         else:
             self.color.print_red(
                 name + " directory not found, cloning for you", True)
-            subprocess.check_call("git clone https://github.com/SCE-Development/" + name,
-                                  stderr=subprocess.STDOUT, shell=True)
-
-    def check_docker(self):
-        """
-        This method is used to check for docker software
-        """
-        self.check_installation("docker", "docker --version",
-                                "https://docs.docker.com/desktop/")
+            subprocess.check_call("git clone"
+                                  + "https://github.com/SCE-Development/"
+                                  + name, stderr=subprocess.STDOUT, shell=True)
 
     def check_mongo(self):
         """
@@ -97,7 +91,8 @@ class SceSetupTool:
         sce_path = os.getcwd()
         try:
             subprocess.check_call(
-                f'grep -rl \"alias sce=\" {file_name}', stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+                f'grep -rl \"alias sce=\" {file_name}',
+                stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
         except subprocess.CalledProcessError:
             with open(file_name, 'a') as file:
                 file.write('\n')
@@ -130,8 +125,12 @@ class SceSetupTool:
                               stderr=subprocess.STDOUT, shell=True)
         subprocess.check_call("py setup.py build",
                               stderr=subprocess.STDOUT, shell=True)
-        self.color.print_pink(
-            "enter the build folder and locate the exe, then use the path to the exe to set your own path", True)
+        where_at = os.path.join(os.getcwd(), os.listdir("build")[0])
+        self.color.print_pink(f"""
+HOLD UP!!!
+To use the sce command line tool, add this to your path:
+{where_at}
+                              """, True)
 
     def add_sce_alias(self):
         self.check_os()
@@ -169,21 +168,16 @@ class SceSetupTool:
         os.chdir("..")
 
     def setup(self):
-        self.color.print_pink('woowooooo')
-        print('should be normal')
-        self.color.print_green('woowooooo')
-        print('should be normal')
-        self.color.print_purple('woowooooo')
-        print('should be normal')
-        self.color.print_red('woowooooo')
-        print('should be normal')
-        self.color.print_yellow('woowooooo')
-        print('should be normal')
         self.check_os()
-        self.check_docker()
         self.check_mongo()
-        self.add_sce_alias()
 
         self.setup_rpc()
         self.setup_core_v4()
         self.setup_discord_bot()
+
+        self.add_sce_alias()
+        self.color.print_yellow("""
+Make sure you you cd into Core-v4/api
+and then ls. After then delete the
+folders.
+                                """)
