@@ -1,3 +1,4 @@
+#flake8: noqa
 from cx_Freeze import setup, Executable
 
 base = None    
