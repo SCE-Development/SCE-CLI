@@ -52,10 +52,9 @@ class SceSetupTool:
         """
         if os.path.isdir("sce-rpc"):
             self.color.print_pink("sce-rpc directory found", True)
-            os.chdir("sce-rpc")
         else:
             os.system("git clone https://github.com/SCE-Development/sce-rpc")
-            os.chdir("sce-rpc")
+        os.chdir("sce-rpc")
 
         if self.operating == "Windows":
             os.system("setup.bat")
@@ -170,6 +169,16 @@ class SceSetupTool:
         os.chdir("..")
 
     def setup(self):
+        self.color.print_pink('woowooooo')
+        print('should be normal')
+        self.color.print_green('woowooooo')
+        print('should be normal')
+        self.color.print_purple('woowooooo')
+        print('should be normal')
+        self.color.print_red('woowooooo')
+        print('should be normal')
+        self.color.print_yellow('woowooooo')
+        print('should be normal')
         self.check_os()
         self.check_docker()
         self.check_mongo()

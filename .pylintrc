@@ -1,0 +1,4 @@
+[MASTER]
+ignore=*sce-rpc*
+[MESSAGES CONTROL]
+disable=missing-docstring

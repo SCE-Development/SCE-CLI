@@ -1,7 +1,7 @@
-Core-v4
-SCE-RPC
-SCE-discord-bot
+Core-v4/
+sce-rpc/
+SCE-discord-bot/
 *.pyc
 .idea
 build
-_pycache_
+__pycache__/
