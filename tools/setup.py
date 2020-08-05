@@ -75,7 +75,7 @@ class SceSetupTool:
         else:
             self.color.print_red(
                 name + " directory not found, cloning for you", True)
-            subprocess.check_call("git clone"
+            subprocess.check_call("git clone "
                                   + "https://github.com/SCE-Development/"
                                   + name, stderr=subprocess.STDOUT, shell=True)
 

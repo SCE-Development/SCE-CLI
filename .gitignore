@@ -2,11 +2,6 @@ Core-v4/
 sce-rpc/
 SCE-discord-bot/
 *.pyc
-<<<<<<< HEAD
-.idea
-build
-=======
 .idea/
 build/
->>>>>>> 9c427cf57482fd77722e93eb9e55b79d903bb9a9
 __pycache__/
