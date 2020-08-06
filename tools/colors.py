@@ -30,9 +30,9 @@ class Colors:
         """
         print(color_type, end="")
         if is_input:
-            print(string)
-        else:
             input(string)
+        else:
+            print(string)
 
         self.reset_color()
 

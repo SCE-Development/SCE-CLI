@@ -5,3 +5,4 @@ SCE-discord-bot/
 .idea/
 build/
 __pycache__/
+config.json

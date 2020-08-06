@@ -29,29 +29,26 @@ class SceSetupTool:
         try:
             subprocess.check_call(command, stdout=self.devnull,
                                   stderr=subprocess.STDOUT, shell=True)
-            self.color.print_yellow(name + " found", True)
+            self.color.print_yellow(name + " found")
         except subprocess.CalledProcessError:
-            self.color.print_red(name + " not found", True)
+            self.color.print_red(name + " not found")
             print("visit here to install: ")
-            self.color.print_purple(link, True)
-            print("press enter to continue: ")
-            choice = input()
-            while choice != "":
-                choice = input()
+            self.color.print_purple(link)
+            input("press enter to continue: ")
 
     def check_os(self):
         """
         This method checks the user's os and stores it into a class variable
         """
         self.operating = platform.system()
-        self.color.print_purple(f'Detected OS: {self.operating}', True)
+        self.color.print_purple(f'Detected OS: {self.operating}')
 
     def setup_rpc(self):
         """
         This method is used to specifically check for the sce-rpc directory
         """
         if os.path.isdir("sce-rpc"):
-            self.color.print_pink("sce-rpc directory found", True)
+            self.color.print_pink("sce-rpc directory found")
         else:
             os.system("git clone https://github.com/SCE-Development/sce-rpc")
         os.chdir("sce-rpc")
@@ -71,10 +68,10 @@ class SceSetupTool:
             name (string): the name of the directory
         """
         if os.path.isdir(name):
-            self.color.print_pink(name + " directory found", True)
+            self.color.print_pink(name + " directory found")
         else:
             self.color.print_red(
-                name + " directory not found, cloning for you", True)
+                name + " directory not found, cloning for you")
             subprocess.check_call("git clone "
                                   + "https://github.com/SCE-Development/"
                                   + name, stderr=subprocess.STDOUT, shell=True)
@@ -130,10 +127,9 @@ class SceSetupTool:
 HOLD UP!!!
 To use the sce command line tool, add this to your path:
 {where_at}
-                              """, True)
+                              """)
 
     def add_sce_alias(self):
-        self.check_os()
         if self.operating == "Windows":
             self.add_alias_windows()
         else:
@@ -167,6 +163,19 @@ To use the sce command line tool, add this to your path:
                               stderr=subprocess.STDOUT, shell=True)
         os.chdir("..")
 
+    def setup_dev(self):
+        """
+        This method conditionally creates a config.json file.
+        """
+        config_example_path = os.path.join("config", "config.example.json")
+        config_path = os.path.join("config", "config.json")
+        copy_command = "copy" if self.operating == "Windows" else "cp"
+        if not os.path.exists(config_example_path):
+            os.system(f"{copy_command} {config_example_path} {config_path}")
+        subprocess.check_call(
+            'python3 -m pip install -r ./requirements.txt --user',
+            stderr=subprocess.STDOUT, shell=True)
+
     def setup(self):
         self.check_os()
         self.check_mongo()
@@ -174,9 +183,11 @@ To use the sce command line tool, add this to your path:
         self.setup_rpc()
         self.setup_core_v4()
         self.setup_discord_bot()
+        self.setup_dev()
 
         self.add_sce_alias()
-        self.color.print_yellow("""
+        if self.operating == "Windows":
+            self.color.print_yellow("""
 The npm install step in the three projects may have created unwanted files.
 Open the projects and delete any unfamiliar untracked files.
-                                """)
+                                    """)
