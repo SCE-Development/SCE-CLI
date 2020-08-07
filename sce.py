@@ -15,8 +15,9 @@ parser.add_argument(
 parser.add_argument(
     '--language', nargs='+',
     help='The language(s) to generate proto code.')
-parser.add_argument('-s', '--service', nargs='*',
-                    help='Docker Container Name')
+parser.add_argument(
+    '--service', '-s', nargs='*',
+    help='Docker Container Name')
 args = parser.parse_args()
 
 if args.command == 'setup':
