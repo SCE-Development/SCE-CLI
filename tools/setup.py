@@ -14,6 +14,9 @@ class SceSetupTool:
     color = Colors()
     devnull = open(os.devnull, 'wb')
 
+    def __init__(self):
+        self.operating = platform.system()
+
     def check_installation(self, name, command, link):
         """
         This method is called to check if the proper software is
@@ -36,22 +39,15 @@ class SceSetupTool:
             self.color.print_purple(link)
             input("press enter to continue: ")
 
-    def check_os(self):
-        """
-        This method checks the user's os and stores it into a class variable
-        """
-        self.operating = platform.system()
-        self.color.print_purple(f'Detected OS: {self.operating}')
-
     def setup_rpc(self):
         """
-        This method is used to specifically check for the sce-rpc directory
+        This method is used to specifically check for the SCE-RPC directory
         """
-        if os.path.isdir("sce-rpc"):
-            self.color.print_pink("sce-rpc directory found")
+        if os.path.isdir("SCE-RPC"):
+            self.color.print_pink("SCE-RPC directory found")
         else:
-            os.system("git clone https://github.com/SCE-Development/sce-rpc")
-        os.chdir("sce-rpc")
+            os.system("git clone https://github.com/SCE-Development/SCE-RPC")
+        os.chdir("SCE-RPC")
 
         if self.operating == "Windows":
             os.system("setup.bat")
@@ -132,12 +128,12 @@ class SceSetupTool:
         self.color.print_yellow(f"""
 Hold on, to finish setup put {where_at}
 in your Path environment variable.
-                                """, True)
+                                """)
 
     def add_sce_alias(self):
         if self.operating == "Windows":
             self.add_alias_windows()
-        else:
+        elif self.operating == "Linux" and self.operating == "Darwin":
             self.add_alias_unix()
 
     def setup_core_v4(self):
@@ -177,12 +173,16 @@ in your Path environment variable.
         copy_command = "copy" if self.operating == "Windows" else "cp"
         if not os.path.exists(config_example_path):
             os.system(f"{copy_command} {config_example_path} {config_path}")
+        if self.operating == "Windows":
+            command = "py"
+        else:
+            command = "python3"
         subprocess.check_call(
-            'python3 -m pip install -r ./requirements.txt --user',
+            f'{command} -m pip install -r ./requirements.txt --user',
             stderr=subprocess.STDOUT, shell=True)
 
     def setup(self):
-        self.check_os()
+        self.color.print_purple(f'Detected OS: {self.operating}')
         self.check_mongo()
 
         self.setup_rpc()

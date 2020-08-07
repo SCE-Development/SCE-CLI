@@ -16,7 +16,7 @@ class ScePresubmitHandler:
             'frontend-test': 'npm run frontend-test',
             'build': 'npm run build'
         },
-        'sce-rpc': {
+        'SCE-RPC': {
             'test': 'npm run test',
             'lint': 'npm run lint',
             'flake8': dev_command
@@ -29,12 +29,11 @@ class ScePresubmitHandler:
         }
     }
 
-    def __init__(self, project):
-        print(project)
-        self.project = project
-        """
-        this is a constructor, send in args.project from sce.py here.
-        """
+    def __init__(self, projects):
+        if projects is None:
+            self.projects = list(self.test_commands.keys())
+        else:
+            self.projects = projects
 
     def run_test(self, test_name, command):
         num_dots = 37 - len(test_name)
@@ -47,11 +46,29 @@ class ScePresubmitHandler:
             dots_failed = dots + "failed"
             print('     ' + test_name + dots_failed)
 
-    def project_tests(self):
-        if self.project != 'dev':
-            os.chdir(self.project)
-        project_tests = self.test_commands[self.project]
+    def print_usage(self):
+        print(f"""
+        Please enter a valid project.
+        Valid projects are: {list(self.test_commands.keys())}.
+        """)
+
+    def test_project(self, project):
+        project_valid = project in self.test_commands
+        if not project or not project_valid:
+            self.print_usage()
+            return
+        print('\nRunning tests for: ' + project)
+        if platform.system() == "Windows":
+            place = os.environ["SCE_PATH"]
+            os.chdir(place)
+        if project != 'dev':
+            os.chdir(project)
+        project_tests = self.test_commands[project]
         for test_name in project_tests.keys():
             self.run_test(test_name, project_tests[test_name])
-        if self.project != 'dev':
+        if project != 'dev':
             os.chdir('..')
+
+    def handle_testing(self):
+        for project in self.projects:
+            self.test_project(project)
