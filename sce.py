@@ -1,6 +1,7 @@
 import argparse
 from tools.setup import SceSetupTool
 from tools.sce_proto_generator import SceProtoGenerator
+from tools.sce_presubmit_handler import ScePresubmitHandler
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
