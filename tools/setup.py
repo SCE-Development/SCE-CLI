@@ -122,12 +122,17 @@ class SceSetupTool:
                               stderr=subprocess.STDOUT, shell=True)
         subprocess.check_call("py setup.py build",
                               stderr=subprocess.STDOUT, shell=True)
-        where_at = os.path.join(os.getcwd(), os.listdir("build")[0])
-        self.color.print_pink(f"""
-HOLD UP!!!
-To use the sce command line tool, add this to your path:
-{where_at}
-                              """)
+        os.chdir("build")
+        current_dir = os.getcwd()
+        os.chdir("..")
+        where_at = os.path.join(current_dir, os.listdir("build")[0])
+        current_dir = os.getcwd()
+        subprocess.check_call("setx SCE_PATH " + current_dir,
+                              stderr=subprocess.STDOUT, shell=True)
+        self.color.print_yellow(f"""
+Hold on, to finish setup put {where_at}
+in your Path environment variable.
+                                """, True)
 
     def add_sce_alias(self):
         if self.operating == "Windows":
