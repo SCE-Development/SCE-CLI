@@ -52,3 +52,17 @@ sce run mongo
 ```
 **Note:** you can run multiple services at once e.g. `npm run discord server`
 
+### Generate
+We can have the `sce` toolg generate gRPC code for us.
+```
+sce generate <path to proto> --language <language types>
+```
+So far, supported langage types are `js` and `py`.
+
+### Rebuild
+This is for Windows users only, who need to rebuild their `.exe` file for the
+ `sce` command to work.
+```
+sce rebuild
+```
+

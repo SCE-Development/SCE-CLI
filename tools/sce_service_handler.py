@@ -3,22 +3,7 @@ import subprocess
 import platform
 
 
-class SceDockerHandler:
-    container_dict = {
-        'frontend': 'cd Core-v4 && npm run frontend',
-        'server': 'cd Core-v4 && npm run server',
-        'led-sign': 'cd SCE-RPC/server/led_sign/ && python3 led_sign_server.py',
-        '2d-printing': 'cd SCE-RPC/server/printing/ && python3 printing_server.py',
-        '3d-printing': 'cd SCE-RPC/server/printing_3d/ && python3 print_3d_server.py',
-        'main_endpoints': 'cd Core-v4/api && npm run main_endpoints',
-        'logging': 'cd Core-v4/api && npm run logging',
-        'google_api': 'cd Core-v4/api && npm run google_api',
-        'discord-bot': True,
-        'sce-rpc': True,
-        'core-v4': True,
-        'mongo': True,
-    }
-
+class SceServiceHandler:
     def __init__(self, services):
         self.user_os = platform.system()
         self.py_command = "py" if self.user_os == "Windows" else "python3"
@@ -40,6 +25,7 @@ class SceDockerHandler:
 
     def run_services(self):
         if not self.services:
+            print('damn')
             self.all_systems_go()
         else:
             for service in self.services:
@@ -58,7 +44,8 @@ class SceDockerHandler:
                 elif service == 'mongo':
                     self.run_mongodb()
                 else:
-                    subprocess.run(self.container_dict[service])
+                    subprocess.check_call(self.service_dict[service],
+                                          shell=True)
 
     def print_usage(self):
         print('Available Services (case sensitive):')
@@ -67,22 +54,19 @@ class SceDockerHandler:
 
     def run_mongodb(self):
         if os.path.exists('~/data/db'):
-            subprocess.run('mongod --dbpath ~/data/db')
+            subprocess.Popen('mongod --dbpath ~/data/db')
         else:
-            subprocess.run('mongod')
+            subprocess.Popen('mongod')
 
     def run_core_v4(self):
-        # self.run_mongodb()
-        subprocess.Popen(self.container_dict['frontend'], shell=True)
-        subprocess.Popen(self.container_dict['server'], shell=True)
+        self.run_mongodb()
+        subprocess.Popen(self.service_dict['frontend'], shell=True)
+        subprocess.Popen(self.service_dict['server'], shell=True)
 
     def run_sce_rpc(self):
-
-        subprocess.Popen('python3 led_sign_server.py',
-                         cwd='SCE-RPC/server/led_sign/',
-                         shell=True)
-        # subprocess.Popen(self.container_dict['3d-printing'], shell=True)
-        # subprocess.Popen(self.container_dict['2d-printing'], shell=True)
+        subprocess.Popen(self.service_dict['led-sign'], shell=True)
+        subprocess.Popen(self.service_dict['3d-printing'], shell=True)
+        subprocess.Popen(self.service_dict['2d-printing'], shell=True)
         subprocess.Popen('npm start', cwd='SCE-RPC', shell=True)
 
     def run_discord_bot(self):

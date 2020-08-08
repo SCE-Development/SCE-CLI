@@ -133,7 +133,7 @@ in your Path environment variable.
     def add_sce_alias(self):
         if self.operating == "Windows":
             self.add_alias_windows()
-        elif self.operating == "Linux" and self.operating == "Darwin":
+        elif self.operating == "Linux" or self.operating == "Darwin":
             self.add_alias_unix()
 
     def setup_core_v4(self):

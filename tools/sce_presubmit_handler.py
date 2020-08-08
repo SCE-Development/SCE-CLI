@@ -58,9 +58,6 @@ class ScePresubmitHandler:
             self.print_usage()
             return
         print('\nRunning tests for: ' + project)
-        if platform.system() == "Windows":
-            place = os.environ["SCE_PATH"]
-            os.chdir(place)
         if project != 'dev':
             os.chdir(project)
         project_tests = self.test_commands[project]
