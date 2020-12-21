@@ -23,10 +23,10 @@ class Colors:
             color_type (string): One of the enums above or user supplied to
                                  print a certain color.
             string (string):     The string that the user wants to print out.
-            is_input (bool):     Decides whether we print the string with a newline
-                                 or not. Helpful for when we want the user to
-                                 input a value on the same line of what we are
-                                 printing.
+            is_input (bool):     Decides whether we print the string with a
+                                 newline or not. Helpful for when we want the
+                                 user to input a value on the same line of what
+                                 we are printing.
         """
         print(color_type, end="")
         if is_input:

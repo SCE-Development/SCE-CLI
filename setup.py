@@ -1,20 +1,20 @@
 from cx_Freeze import setup, Executable
 
-base = None    
+base = None
 
 executables = [Executable("sce.py", base=base)]
 
 packages = ["idna"]
 options = {
-    'build_exe': {    
-        'packages':packages,
-    },    
+    'build_exe': {
+        'packages': packages,
+    },
 }
 
 setup(
-    name = "sce",
-    options = options,
-    version = "1.0",
-    description = 'lmao',
-    executables = executables
+    name="sce",
+    options=options,
+    version="1.0",
+    description='lmao',
+    executables=executables
 )

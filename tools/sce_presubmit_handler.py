@@ -19,13 +19,15 @@ class ScePresubmitHandler:
         'SCE-RPC': {
             'test': 'npm run test',
             'lint': 'npm run lint',
-            'flake8': dev_command
+            'flake8': dev_command +
+            " --exclude=node_modules,*pb2*,modules"
         },
         'SCE-discord-bot': {
             'lint': 'npm run lint'
         },
         'dev': {
-            'flake8': dev_command
+            'flake8': dev_command +
+            " --exclude=SCE-RPC,Core-v4,SCE-discord-bot"
         }
     }
 
@@ -60,6 +62,7 @@ class ScePresubmitHandler:
         print('\nRunning tests for: ' + project)
         if project != 'dev':
             os.chdir(project)
+        print(os.getcwd())
         project_tests = self.test_commands[project]
         for test_name in project_tests.keys():
             self.run_test(test_name, project_tests[test_name])
