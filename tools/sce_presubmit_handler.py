@@ -18,6 +18,10 @@ class ScePresubmitHandler:
         },
         'SCE-discord-bot': {
             'lint': 'npm run lint'
+        },
+        'dev': {
+            'flake8': dev_command +
+            " --exclude=Core-v4,SCE-discord-bot"
         }
     }
 
