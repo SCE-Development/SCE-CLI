@@ -19,10 +19,6 @@ This tool runs presubmit checks for a project. For example:
 ```sh
 # To run tests on all projects
 sce presubmit
-# To run a test on SCE-RPC
-sce presubmit --project SCE-RPC
-# To run a test on SCE-RPC and Core-v4
-sce presubmit --project SCE-RPC Core-v4
 ```
 
 ### Run
