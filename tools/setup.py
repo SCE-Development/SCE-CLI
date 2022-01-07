@@ -39,22 +39,6 @@ class SceSetupTool:
             self.color.print_purple(link)
             input("press enter to continue: ")
 
-    def setup_rpc(self):
-        """
-        This method is used to specifically check for the SCE-RPC directory
-        """
-        if os.path.isdir("SCE-RPC"):
-            self.color.print_pink("SCE-RPC directory found")
-        else:
-            os.system("git clone https://github.com/SCE-Development/SCE-RPC")
-        os.chdir("SCE-RPC")
-
-        if self.operating == "Windows":
-            os.system("setup.bat")
-        else:
-            os.system("./setup.sh")
-        os.chdir("..")
-
     def check_directory(self, name):
         """
         This method checks for a given directory
@@ -185,7 +169,6 @@ in your Path environment variable.
         self.color.print_purple(f'Detected OS: {self.operating}')
         self.check_mongo()
 
-        self.setup_rpc()
         self.setup_core_v4()
         self.setup_discord_bot()
         self.setup_dev()
