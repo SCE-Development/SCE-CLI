@@ -61,8 +61,8 @@ class SceSetupTool:
         This method checks for mongo installation
         """
         self.check_installation("mongo", "mongo --version",
-                                "https://www.mongodb.com/"
-                                + "try/download/community")
+                                    "https://www.mongodb.com/"
+                                    + "try/download/community")
 
     def write_alias_to_file(self, file_name):
         sce_path = os.getcwd()
@@ -108,11 +108,10 @@ class SceSetupTool:
         where_at = os.path.join(current_dir, os.listdir("build")[0])
         current_dir = os.getcwd()
         subprocess.check_call("setx SCE_PATH " + current_dir,
-                              stderr=subprocess.STDOUT, shell=True)
-        self.color.print_yellow(f"""
-Hold on, to finish setup put {where_at}
-in your Path environment variable.
-                                """)
+                                stderr=subprocess.STDOUT, shell=True)
+        self.color.print_yellow("Hold on, to finish setup put")
+        self.color.print_green(where_at)
+        self.color.print_yellow("in your Path environment variable.")
 
     def add_sce_alias(self):
         if self.operating == "Windows":
@@ -129,10 +128,10 @@ in your Path environment variable.
         subprocess.check_call(
             "npm install", stderr=subprocess.STDOUT, shell=True)
         if self.operating == "Windows":
-            subprocess.check_call("py setup.py", stdout=subprocess.PIPE,
+           subprocess.check_call("py setup.py", stdout=subprocess.PIPE,
                                   stderr=subprocess.STDOUT, shell=True)
         else:
-            subprocess.check_call("python3 setup.py", stdout=subprocess.PIPE,
+           subprocess.check_call("python3 setup.py", stdout=subprocess.PIPE,
                                   stderr=subprocess.STDOUT, shell=True)
         subprocess.check_call("npm run server-install",
                               stderr=subprocess.STDOUT, shell=True)
@@ -145,7 +144,7 @@ in your Path environment variable.
         self.check_directory("SCE-discord-bot")
         os.chdir("SCE-discord-bot")
         subprocess.check_call("npm install",
-                              stderr=subprocess.STDOUT, shell=True)
+                            stderr=subprocess.STDOUT, shell=True)
         os.chdir("..")
 
     def setup_dev(self):
