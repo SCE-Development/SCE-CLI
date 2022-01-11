@@ -13,6 +13,7 @@ class SceSetupTool:
     operating = ""
     color = Colors()
     devnull = open(os.devnull, 'wb')
+    docker_is_running = False
 
     def __init__(self):
         self.operating = platform.system()
@@ -33,11 +34,13 @@ class SceSetupTool:
             subprocess.check_call(command, stdout=self.devnull,
                                   stderr=subprocess.STDOUT, shell=True)
             self.color.print_yellow(name + " found")
+            return True
         except subprocess.CalledProcessError:
             self.color.print_red(name + " not found")
             print("visit here to install: ")
             self.color.print_purple(link)
             input("press enter to continue: ")
+            return False
 
     def check_directory(self, name):
         """
@@ -56,13 +59,24 @@ class SceSetupTool:
                                   + "https://github.com/SCE-Development/"
                                   + name, stderr=subprocess.STDOUT, shell=True)
 
-    def check_mongo(self):
+    def check_docker(self):
         """
-        This method checks for mongo installation
+        This method checks for docker installation and
+        if it is running
         """
-        self.check_installation("mongo", "mongo --version",
-                                    "https://www.mongodb.com/"
-                                    + "try/download/community")
+        installed = self.check_installation(
+            'Docker', 'docker -v', 'https://www.docker.com/products/docker-desktop'
+        )
+
+        if not installed:
+            return
+        try:
+            subprocess.check_output('docker ps', stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as err:
+            Colors.print_red(err.output.decode())
+            return
+
+        self.docker_is_running = True
 
     def write_alias_to_file(self, file_name):
         sce_path = os.getcwd()
@@ -166,7 +180,7 @@ class SceSetupTool:
 
     def setup(self):
         self.color.print_purple(f'Detected OS: {self.operating}')
-        self.check_mongo()
+        self.check_docker()
 
         self.setup_core_v4()
         self.setup_discord_bot()
@@ -178,3 +192,11 @@ class SceSetupTool:
 The npm install step in the three projects may have created unwanted files.
 Open the projects and delete any unfamiliar untracked files.
                                     """)
+
+        if not self.docker_is_running:
+            if self.operating == "Windows":
+                Colors.print_pink(
+                    """
+Please start Docker Desktop before running backend services.
+                    """
+                )
