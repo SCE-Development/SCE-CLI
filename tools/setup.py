@@ -143,6 +143,9 @@ class SceSetupTool:
         """
         self.check_directory("SCE-discord-bot")
         os.chdir("SCE-discord-bot")
+        copy_command = "copy" if self.operating == "Windows" else "cp"
+        if not os.path.exists("config.json"):
+            os.system(f"{copy_command} config.example.json config.json")
         subprocess.check_call("npm install",
                             stderr=subprocess.STDOUT, shell=True)
         os.chdir("..")
