@@ -22,6 +22,8 @@ parser.add_argument(
     help='SCE Service name')
 args = parser.parse_args()
 
+print(args)
+
 # cd into the dev folder if we are in windows.
 # we dont need to do it for unix/macos because
 # changing the directory is part of the sce alias.

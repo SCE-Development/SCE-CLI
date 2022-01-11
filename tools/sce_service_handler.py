@@ -43,10 +43,19 @@ class SceServiceHandler:
             print('\t', key)
 
     def run_mongodb(self):
-        if os.path.exists('~/data/db'):
-            subprocess.Popen('mongod --dbpath ~/data/db')
-        else:
-            subprocess.Popen('mongod')
+        devnull = open(os.devnull, 'wb')
+        try:
+            subprocess.check_output('docker ps',
+                                  stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as err:
+            output = err.output.decode()
+            print(output)
+            return
+        except FileNotFoundError as err:
+            print('Docker is not installed.')
+            return
+        
+        subprocess.Popen('docker run -it -p 27017:27017 -v ~/data/db:/data/db mongo', shell=True)
 
     def run_core_v4(self):
         self.run_mongodb()
