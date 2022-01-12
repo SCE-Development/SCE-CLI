@@ -203,15 +203,15 @@ Open the projects and delete any unfamiliar untracked files.
         if not self.docker_is_running:
             if self.operating == "Windows":
                 self.color.print_pink(
-                    """
+                    '''\
 Please start Docker Desktop before running backend services.
-                    """
+                    '''
                 )
 
         if self.operating == "Windows":
             self.color.print_yellow(
+            '''\
+Edit {SCE_DB_PATH} environment variable to change your MongoDB data volume mapping
             '''
-Edit \{SCE_DB_PATH\} environment variable to change your MongoDB data volume mapping
-            '''
-        )
+            )
 
