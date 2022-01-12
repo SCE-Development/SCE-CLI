@@ -5,6 +5,8 @@ from tools.colors import Colors
 
 
 class SceServiceHandler:
+    colors = Colors()
+
     def __init__(self, services):
         self.user_os = platform.system()
         self.py_command = "py" if self.user_os == "Windows" else "python3"
@@ -48,17 +50,18 @@ class SceServiceHandler:
             subprocess.check_output('docker ps', stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as err:
             output = err.output.decode()
-            Colors.print_red(output)
-            Colors.print_red('To run MongoDB, ensure your Docker Desktop is running.')
+            self.colors.print_red(output)
+            self.colors.print_red('To run MongoDB, ensure your Docker Desktop is running.')
             return
         except FileNotFoundError as err:
-            Colors.print_red(
+            self.colors.print_red(
                 'To run MongoDB, please install Docker Desktop! If you already have, you may need to reload this terminal.'
             )
             return
 
         subprocess.Popen(
-            'docker run -it -p 27017:27017 -v ~/data/db:/data/db mongo', shell=True
+            f'''docker run -it -p 27017:27017 -v {os.environ['SCE_DB_PATH']}:/data/db mongo''',
+            shell=True
         )
 
     def run_core_v4(self):

@@ -5,3 +5,4 @@ SCE-discord-bot/
 build/
 __pycache__/
 config.json
+mongo/

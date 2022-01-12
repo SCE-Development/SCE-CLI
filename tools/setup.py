@@ -73,7 +73,8 @@ class SceSetupTool:
         try:
             subprocess.check_output('docker ps', stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as err:
-            Colors.print_red(err.output.decode())
+            errMsg = err.output.decode()
+            self.color.print_red(errMsg)
             return
 
         self.docker_is_running = True
@@ -123,6 +124,12 @@ class SceSetupTool:
         current_dir = os.getcwd()
         subprocess.check_call("setx SCE_PATH " + current_dir,
                                 stderr=subprocess.STDOUT, shell=True)
+        db_path = current_dir + '\mongo\data\db'
+        subprocess.check_call(
+            'setx SCE_DB_PATH ' + db_path,
+            stderr=subprocess.STDOUT,
+            shell=True
+        )
         self.color.print_yellow("Hold on, to finish setup put")
         self.color.print_green(where_at)
         self.color.print_yellow("in your Path environment variable.")
@@ -195,8 +202,16 @@ Open the projects and delete any unfamiliar untracked files.
 
         if not self.docker_is_running:
             if self.operating == "Windows":
-                Colors.print_pink(
+                self.color.print_pink(
                     """
 Please start Docker Desktop before running backend services.
                     """
                 )
+
+        if self.operating == "Windows":
+            self.color.print_yellow(
+            '''
+Edit \{SCE_DB_PATH\} environment variable to change your MongoDB data volume mapping
+            '''
+        )
+
