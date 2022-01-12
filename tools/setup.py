@@ -68,8 +68,6 @@ class SceSetupTool:
         """
             This method checks for node installation
         """
-        self.check_installation("node", "node --version",
-                                    "https://nodejs.org/en/download/")
         self.check_installation("npm", "npm --version",
                                     "https://nodejs.org/en/download/")
 
