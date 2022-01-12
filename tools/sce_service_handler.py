@@ -47,14 +47,30 @@ class SceServiceHandler:
 
     def run_mongodb(self):
         devnull = open(os.devnull, 'wb')
+        sce_path = os.environ.get('SCE_PATH')
+        if not sce_path:
+            self.colors.print_red('Error: current working path not registered, please re-run the setup script.')
+            return
+
+        db_path = os.path.join(sce_path, 'mongo', 'data', 'db')
+            
+        # Test if docker is installed or not running
         try:
             subprocess.check_output('docker ps', stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as err:
-            output = err.output.decode()
-            self.colors.print_red(output)
+            # On Windows: Installed but not running
+            # If need detailed error msg:
+            # output = err.output.decode()
+            # self.colors.print_red(output)
             self.colors.print_red('To run MongoDB, ensure your Docker Desktop is running.')
             return
-        except FileNotFoundError as err:
+        except FileNotFoundError:
+            # On Windows: not installed
+            # On Mac or Linux: installed but not running OR not installed
+            if self.user_os == "Windows":
+                self.colors.print_red('To run MongoDB, please install Docker Desktop! If you already have, you may need to reload this terminal.')
+                return
+            # Test for Mac or Linux
             try:
                 subprocess.check_call(
                     'docker -v',
@@ -62,25 +78,19 @@ class SceServiceHandler:
                     stderr=subprocess.STDOUT, shell=True
                 )    
             except subprocess.CalledProcessError:
+                # Not running
                 self.colors.print_red('To run MongoDB, ensure your Docker Desktop is running.')
                 return
+            except FileNotFoundError:
+                # Not installed
+                self.colors.print_red('To run MongoDB, please install Docker Desktop! If you already have, you may need to reload this terminal.')
+                return
 
-            self.colors.print_red(
-                'To run MongoDB, please install Docker Desktop! If you already have, you may need to reload this terminal.'
-            )
-            return
-
-        sce_path = os.environ.get('SCE_PATH')
-
-        if not sce_path:
-            self.colors.print_red('Error: current working path not registered, please re-run the setup script.')
-            return
-
-        db_path = os.path.join(sce_path, 'mongo', 'data', 'db')
         subprocess.Popen(
             f'''docker run -it -p 27017:27017 -v {db_path}:/data/db mongo''',
             shell=True
         )
+        
 
     def run_core_v4(self):
         self.run_mongodb()
