@@ -22,7 +22,7 @@ class SceSetupTool:
         This method is called to check if the proper software is
         installed if the software is installed the console will
         print out a message and move on if not then the console
-        will redirect the user to the site to install the softare
+        will redirect the user to the site to install the software
             Parameters:
             name (string): name of the software to check for
             command (string): the name of the command
@@ -63,6 +63,15 @@ class SceSetupTool:
         self.check_installation("mongo", "mongo --version",
                                     "https://www.mongodb.com/"
                                     + "try/download/community")
+    
+    def check_node(self): 
+        """
+            This method checks for node installation
+        """
+        self.check_installation("node", "node --version",
+                                    "https://nodejs.org/en/download/")
+        self.check_installation("npm", "npm --version",
+                                    "https://nodejs.org/en/download/")
 
     def write_alias_to_file(self, file_name):
         sce_path = os.getcwd()
@@ -170,6 +179,7 @@ class SceSetupTool:
     def setup(self):
         self.color.print_purple(f'Detected OS: {self.operating}')
         self.check_mongo()
+        self.check_node()
 
         self.setup_core_v4()
         self.setup_discord_bot()
