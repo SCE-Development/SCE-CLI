@@ -59,8 +59,14 @@ class SceServiceHandler:
             )
             return
 
+        db_path = ''
+        if 'SCE_DB_PATH' in os.environ:
+            db_path = os.environ['SCE_DB_PATH']
+        else:
+            db_path = os.path.join(os.environ['SCE_PATH'], 'data', 'db')
+        print(db_path)
         subprocess.Popen(
-            f'''docker run -it -p 27017:27017 -v {os.environ['SCE_DB_PATH']}:/data/db mongo''',
+            f'''docker run -it -p 27017:27017 -v {db_path}:/data/db mongo''',
             shell=True
         )
 
