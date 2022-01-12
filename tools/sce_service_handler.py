@@ -46,6 +46,7 @@ class SceServiceHandler:
             print('\t', key)
 
     def run_mongodb(self):
+        devnull = open(os.devnull, 'wb')
         try:
             subprocess.check_output('docker ps', stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as err:
@@ -54,6 +55,16 @@ class SceServiceHandler:
             self.colors.print_red('To run MongoDB, ensure your Docker Desktop is running.')
             return
         except FileNotFoundError as err:
+            try:
+                subprocess.check_call(
+                    'Docker', 'docker -v', 'https://www.docker.com/products/docker-desktop',
+                    stdout=devnull,
+                    stderr=subprocess.STDOUT, shell=True
+                )    
+            except subprocess.CalledProcessError:
+                self.colors.print_red('To run MongoDB, ensure your Docker Desktop is running.')
+                return
+                
             self.colors.print_red(
                 'To run MongoDB, please install Docker Desktop! If you already have, you may need to reload this terminal.'
             )
