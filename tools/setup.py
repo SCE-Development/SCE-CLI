@@ -72,9 +72,9 @@ class SceSetupTool:
             return
         try:
             subprocess.check_output('docker ps', stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError as err:
-            errMsg = err.output.decode()
-            self.color.print_red(errMsg)
+        except subprocess.CalledProcessError:
+            return
+        except FileNotFoundError:
             return
 
         self.docker_is_running = True
