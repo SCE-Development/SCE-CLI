@@ -75,10 +75,9 @@ class SceServiceHandler:
                 subprocess.check_call(
                     'docker -v',
                     stdout=devnull,
-                    stderr=subprocess.STDOUT, shell=True
-                )    
-            except subprocess.CalledProcessError:
-                # Not running
+                    stderr=subprocess.STDOUT,
+                    shell=True
+                )
                 self.colors.print_red('To run MongoDB, ensure your Docker Desktop is running.')
                 return
             except FileNotFoundError:
