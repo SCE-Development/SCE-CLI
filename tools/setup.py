@@ -23,7 +23,7 @@ class SceSetupTool:
         This method is called to check if the proper software is
         installed if the software is installed the console will
         print out a message and move on if not then the console
-        will redirect the user to the site to install the softare
+        will redirect the user to the site to install the software
             Parameters:
             name (string): name of the software to check for
             command (string): the name of the command
@@ -64,6 +64,7 @@ class SceSetupTool:
         This method checks for docker installation and
         if it is running
         """
+
         installed = self.check_installation(
             'Docker', 'docker -v', 'https://www.docker.com/products/docker-desktop'
         )
@@ -78,6 +79,13 @@ class SceSetupTool:
             return
 
         self.docker_is_running = True
+    
+    def check_node(self): 
+        """
+            This method checks for node installation
+        """
+        self.check_installation("npm", "npm --version",
+                                    "https://nodejs.org/en/download/")
 
     def write_alias_to_file(self, file_name):
         sce_path = os.getcwd()
@@ -158,6 +166,9 @@ class SceSetupTool:
         """
         self.check_directory("SCE-discord-bot")
         os.chdir("SCE-discord-bot")
+        copy_command = "copy" if self.operating == "Windows" else "cp"
+        if not os.path.exists("config.json"):
+            os.system(f"{copy_command} config.example.json config.json")
         subprocess.check_call("npm install",
                             stderr=subprocess.STDOUT, shell=True)
         os.chdir("..")
@@ -181,7 +192,9 @@ class SceSetupTool:
 
     def setup(self):
         self.color.print_purple(f'Detected OS: {self.operating}')
+
         self.check_docker()
+        self.check_node()
 
         self.setup_core_v4()
         self.setup_discord_bot()
