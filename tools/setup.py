@@ -80,7 +80,7 @@ class SceSetupTool:
         except subprocess.CalledProcessError:
             with open(file_name, 'a') as file:
                 file.write('\n')
-                file.write(f"SCE_PATH={sce_path}")
+                file.write(f"export SCE_PATH={sce_path}")
                 file.write('\n')
                 file.write(f'alias sce="python3 {sce_path}/sce.py"')
                 file.write('\n')
