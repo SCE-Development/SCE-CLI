@@ -48,13 +48,43 @@ class SceServiceHandler:
     def run_mongodb(self):
         devnull = open(os.devnull, 'wb')
         sce_path = os.environ.get('SCE_PATH')
+
         if not sce_path:
-            self.colors.print_red('Error: current working path not registered, please re-run the setup script.')
+            self.colors.print_red(
+                'Error: current working path not registered, please re-run the setup script. ' \
+                'If the error still presents, please reload your shell.'
+            )
             return
 
         db_path = os.path.join(sce_path, 'mongo', 'data', 'db')
             
         # Test if docker is installed or not running
+
+        if self.user_os in {'Darwin', 'Linux'}:
+            # 'docker ps': Both Docker not installed or not running raise FileNotFoundError
+            try:
+                print('Now do docker ps')
+                subprocess.check_output('docker ps')
+            except FileNotFoundError:
+                print('Now in FileNotFound')
+                # 'docker -v': Docker not running raises FileNotFoundError. Docker not installed raises CalledProcessError
+                try:
+                    subprocess.check_output('docker -v', shell=True)
+                except FileNotFoundError:
+                    self.colors.print_red('To run MongoDB, ensure your Docker Desktop is running.')
+                    return
+                except subprocess.CalledProcessError:
+                    self.colors.print_red(
+                        'To run MongoDB, please install Docker Desktop! '\
+                        'If you already have, you may need to reload your shell.'
+                    )
+                    return
+
+        if self.user_os == 'Windows':
+            pass
+            
+            
+
         try:
             subprocess.check_output('docker ps', stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as err:
