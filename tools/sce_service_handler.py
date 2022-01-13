@@ -46,7 +46,6 @@ class SceServiceHandler:
             print('\t', key)
 
     def run_mongodb(self):
-        devnull = open(os.devnull, 'wb')
         sce_path = os.environ.get('SCE_PATH')
 
         if not sce_path:
