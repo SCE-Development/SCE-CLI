@@ -81,38 +81,19 @@ class SceServiceHandler:
                     return
 
         if self.user_os == 'Windows':
-            pass
-            
-            
-
-        try:
-            subprocess.check_output('docker ps', stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError as err:
-            # On Windows: Installed but not running
-            # If need detailed error msg:
-            # output = err.output.decode()
-            # self.colors.print_red(output)
-            self.colors.print_red('To run MongoDB, ensure your Docker Desktop is running.')
-            return
-        except FileNotFoundError:
-            # On Windows: not installed
-            # On Mac or Linux: installed but not running OR not installed
-            if self.user_os == "Windows":
-                self.colors.print_red('To run MongoDB, please install Docker Desktop! If you already have, you may need to reload this terminal.')
-                return
-            # Test for Mac or Linux
             try:
-                subprocess.check_call(
-                    'docker -v',
-                    stdout=devnull,
-                    stderr=subprocess.STDOUT,
-                    shell=True
+                subprocess.check_output(
+                    'docker ps',
+                    stderr=subprocess.DEVNULL
                 )
-                self.colors.print_red('To run MongoDB, ensure your Docker Desktop is running.')
-                return
             except FileNotFoundError:
-                # Not installed
-                self.colors.print_red('To run MongoDB, please install Docker Desktop! If you already have, you may need to reload this terminal.')
+                self.colors.print_red(
+                    'To run MongoDB, please install Docker Desktop! '\
+                    'If you already have, you may need to reload your shell.'
+                )
+                return
+            except subprocess.CalledProcessError:
+                self.colors.print_red('To run MongoDB, ensure your Docker Desktop is running.')
                 return
 
         subprocess.Popen(
