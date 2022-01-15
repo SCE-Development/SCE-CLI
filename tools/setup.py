@@ -2,6 +2,7 @@ import subprocess
 import os
 import platform
 from tools.colors import Colors
+from tools.shared_utils import check_docker_status
 
 
 class SceSetupTool:
@@ -13,7 +14,7 @@ class SceSetupTool:
     operating = ""
     color = Colors()
     devnull = open(os.devnull, 'wb')
-    docker_is_running = False
+    docker_is_running = True
 
     def __init__(self):
         self.operating = platform.system()
@@ -34,13 +35,11 @@ class SceSetupTool:
             subprocess.check_call(command, stdout=self.devnull,
                                   stderr=subprocess.STDOUT, shell=True)
             self.color.print_yellow(name + " found")
-            return True
         except subprocess.CalledProcessError:
             self.color.print_red(name + " not found")
             print("visit here to install: ")
             self.color.print_purple(link)
             input("press enter to continue: ")
-            return False
 
     def check_directory(self, name):
         """
@@ -64,27 +63,46 @@ class SceSetupTool:
         This method checks for docker installation and
         if it is running
         """
-
-        installed = self.check_installation(
-            'Docker', 'docker -v', 'https://www.docker.com/products/docker-desktop'
-        )
-
-        if not installed:
+        docker_status = check_docker_status()
+        if not docker_status['is_installed']:
+            self.color.print_red('Docker not found')
+            print("Follow the instruction to install: ")
+            self.color.print_purple('https://docs.docker.com/get-docker/')
+            input("Press enter to exit setup: ")
             return
-        try:
-            subprocess.check_output('docker ps', stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError:
-            return
-        except FileNotFoundError:
-            return
+        if not docker_status['is_running']:
+            self.docker_is_running = False
+        self.color.print_yellow('Docker found')
 
-        self.docker_is_running = True
+
+        # try:
+        #     subprocess.run(
+        #         ['docker', 'ps'],
+        #         check=True,
+        #         stdout=subprocess.DEVNULL,
+        #         stderr=subprocess.DEVNULL
+        #     )
+        # except FileNotFoundError:
+        #     is_installed = False
+        #     self.docker_is_running = False
+        # except subprocess.CalledProcessError:
+        #     self.docker_is_running = False
+        # except Exception:
+        #     self.colors.print_red('''Something is wrong with Docker and we don't know why... ABORT''')
+        #     return
+
+        # if not is_installed:
+        #     self.color.print_red('Docker not found')
+        #     print("Follow the instruction to install: ")
+        #     self.color.print_purple('https://docs.docker.com/get-docker/')
+        #     input("press enter to continue: ")
+
     
     def check_node(self): 
         """
             This method checks for node installation
         """
-        self.check_installation("npm", "npm --version",
+        self.check_installation("npm", "npm -v",
                                     "https://nodejs.org/en/download/")
 
     def write_alias_to_file(self, file_name):

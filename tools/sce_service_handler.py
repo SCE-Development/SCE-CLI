@@ -1,7 +1,12 @@
+from asyncio.subprocess import DEVNULL, PIPE
 import os
+from pickle import FALSE
 import subprocess
 import platform
+from sys import stdout
+from tabnanny import check
 from tools.colors import Colors
+from tools.shared_utils import check_docker_status
 
 
 class SceServiceHandler:
@@ -56,44 +61,62 @@ class SceServiceHandler:
             return
 
         db_path = os.path.join(sce_path, 'mongo', 'data', 'db')
+
+        docker_status = check_docker_status()
+        if not docker_status['is_installed']:
+            self.colors.print_red(
+                'To run MongoDB, please install Docker Desktop! '\
+                'If you already have, you may need to reload your shell.'
+            )
+            return
+        if not docker_status['is_running']:
+            self.colors.print_red('To run MongoDB, ensure your Docker Desktop is running.')
+            return
             
         # Test if docker is installed or not running
 
-        if self.user_os in {'Darwin', 'Linux'}:
-            # 'docker ps': Both Docker not installed or not running raise FileNotFoundError
-            try:
-                print('Now do docker ps')
-                subprocess.check_output('docker ps')
-            except FileNotFoundError:
-                print('Now in FileNotFound')
-                # 'docker -v': Docker not running raises FileNotFoundError. Docker not installed raises CalledProcessError
-                try:
-                    subprocess.check_output('docker -v', shell=True)
-                except FileNotFoundError:
-                    self.colors.print_red('To run MongoDB, ensure your Docker Desktop is running.')
-                    return
-                except subprocess.CalledProcessError:
-                    self.colors.print_red(
-                        'To run MongoDB, please install Docker Desktop! '\
-                        'If you already have, you may need to reload your shell.'
-                    )
-                    return
+        # if self.user_os in {'Darwin', 'Linux'}:
+        #     # 'docker ps': Docker not installed will raise FileNotFoundError,
+        #     # Docker not running will raise CalledProcessError
+        #     try:
+        #         subprocess.run(
+        #             ['docker', 'ps'],
+        #             check=True,
+        #             stdout=subprocess.DEVNULL,
+        #             stderr=subprocess.DEVNULL
+        #         )
+        #     except FileNotFoundError:
+        #         self.colors.print_red(
+        #             'To run MongoDB, please install Docker Desktop! '\
+        #             'If you already have, you may need to reload your shell.'
+        #         )
+        #         return
+        #     except subprocess.CalledProcessError:
+        #         self.colors.print_red('To run MongoDB, ensure your Docker Desktop is running.')
+        #         return
+        #     except Exception:
+        #         self.colors.print_red('''Something is wrong with Docker and we don't know why...''')
+        #         return
+            
 
-        if self.user_os == 'Windows':
-            try:
-                subprocess.check_output(
-                    'docker ps',
-                    stderr=subprocess.DEVNULL
-                )
-            except FileNotFoundError:
-                self.colors.print_red(
-                    'To run MongoDB, please install Docker Desktop! '\
-                    'If you already have, you may need to reload your shell.'
-                )
-                return
-            except subprocess.CalledProcessError:
-                self.colors.print_red('To run MongoDB, ensure your Docker Desktop is running.')
-                return
+        # elif self.user_os == 'Windows':
+        #     try:
+        #         subprocess.check_output(
+        #             'docker ps',
+        #             stderr=subprocess.DEVNULL
+        #         )
+        #     except FileNotFoundError:
+        #         self.colors.print_red(
+        #             'To run MongoDB, please install Docker Desktop! '\
+        #             'If you already have, you may need to reload your shell.'
+        #         )
+        #         return
+        #     except subprocess.CalledProcessError:
+        #         self.colors.print_red('To run MongoDB, ensure your Docker Desktop is running.')
+        #         return
+        #     except Exception:
+        #         self.colors.print_red('''Something went wrong and we don't know why...''')
+        #         return
 
         subprocess.Popen(
             f'''docker run -it -p 27017:27017 -v {db_path}:/data/db mongo''',
