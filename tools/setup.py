@@ -74,29 +74,6 @@ class SceSetupTool:
             self.docker_is_running = False
         self.color.print_yellow('Docker found')
 
-
-        # try:
-        #     subprocess.run(
-        #         ['docker', 'ps'],
-        #         check=True,
-        #         stdout=subprocess.DEVNULL,
-        #         stderr=subprocess.DEVNULL
-        #     )
-        # except FileNotFoundError:
-        #     is_installed = False
-        #     self.docker_is_running = False
-        # except subprocess.CalledProcessError:
-        #     self.docker_is_running = False
-        # except Exception:
-        #     self.colors.print_red('''Something is wrong with Docker and we don't know why... ABORT''')
-        #     return
-
-        # if not is_installed:
-        #     self.color.print_red('Docker not found')
-        #     print("Follow the instruction to install: ")
-        #     self.color.print_purple('https://docs.docker.com/get-docker/')
-        #     input("press enter to continue: ")
-
     
     def check_node(self): 
         """
