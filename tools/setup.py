@@ -92,7 +92,6 @@ class SceSetupTool:
             ZSHRC_PATH = f"{HOME_PATH}/.zshrc"
             if os.path.isfile(BASHRC_PATH):
                 self.write_alias_to_file(BASHRC_PATH)
-                self.write_alias_to_file('dookie')
             if os.path.isfile(ZSHRC_PATH):
                 self.write_alias_to_file(ZSHRC_PATH)
         elif self.operating == "Linux":
