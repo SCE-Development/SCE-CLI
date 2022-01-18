@@ -61,11 +61,13 @@ class SceServiceHandler:
             )
             return
         if not docker_status['is_running']:
-            self.colors.print_red('To run MongoDB, ensure your Docker Desktop is running.')
+            self.colors.print_red('To run MongoDB, ensure your Docker daemon is running.')
             return
 
         subprocess.Popen(
-            f'''docker run -it -p 27017:27017 -v {self.mongo_volume_path}:/data/db mongo''',
+            f'''docker run -p 27017:27017 -v {self.mongo_volume_path}:/data/db mongo''',
+            stdout=subprocess.DEVNULL,
+            stdin=subprocess.DEVNULL,
             shell=True
         )
         
