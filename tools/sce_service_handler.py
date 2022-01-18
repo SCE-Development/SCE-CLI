@@ -7,6 +7,7 @@ from tools.shared_utils import check_docker_status
 
 class SceServiceHandler:
     colors = Colors()
+    mongo_volume_path = None
 
     def __init__(self, services):
         self.user_os = platform.system()
@@ -19,6 +20,11 @@ class SceServiceHandler:
             'core-v4': True,
             'mongo': True,
         }
+        
+        set_mongo_path_res = self.set_mongo_volume_path()
+        if set_mongo_path_res['error']:
+            self.colors.print_red(set_mongo_path_res['message'])
+            return
 
     def run_services(self):
         if not self.services:
@@ -47,17 +53,6 @@ class SceServiceHandler:
             print('\t', key)
 
     def run_mongodb(self):
-        sce_path = os.environ.get('SCE_PATH')
-
-        if not sce_path:
-            self.colors.print_red(
-                'Error: current working path not registered, please re-run the setup script. ' \
-                'If the error still presents, please reload your shell.'
-            )
-            return
-
-        db_path = os.path.join(sce_path, 'mongo', 'data', 'db')
-
         docker_status = check_docker_status()
         if not docker_status['is_installed']:
             self.colors.print_red(
@@ -70,7 +65,7 @@ class SceServiceHandler:
             return
 
         subprocess.Popen(
-            f'''docker run -it -p 27017:27017 -v {db_path}:/data/db mongo''',
+            f'''docker run -it -p 27017:27017 -v {self.mongo_volume_path}:/data/db mongo''',
             shell=True
         )
         
@@ -86,3 +81,37 @@ class SceServiceHandler:
     def all_systems_go(self):
         self.run_core_v4()
         self.run_discord_bot()
+
+    def set_mongo_volume_path(self, path='default'):
+        sce_path = os.environ.get('SCE_PATH')
+        if not sce_path:
+            self.colors.print_red(
+                
+            )
+            return {
+                'error': True,
+                'message': (
+                    'Error: Please run the setup command first. ' \
+                    'If you already have, you may need to reload your shell.'
+                )
+            }
+
+        self.mongo_volume_path = os.path.join(sce_path, 'mongo', 'data', 'db')
+        if path == 'default':
+            return { 'error': False }
+
+        try:
+            os.mkdir(path)
+            self.mongo_volume_path = path
+            return { 'error': False }
+        except FileExistsError:
+            self.mongo_volume_path = path
+            return { 'error': False }
+        except Exception:
+            return {
+                'error': True,
+                'message': (
+                    'The path you entered does not appear to be a valid directory.' \
+                    'Please check it and try again.'
+                )
+            }

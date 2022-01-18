@@ -8,6 +8,10 @@ def check_docker_status():
       stdout=subprocess.DEVNULL,
       stderr=subprocess.DEVNULL
     )
+    return { 
+      'is_installed': True,
+      'is_running': True
+    }
   except FileNotFoundError:
     return { 
       'is_installed': False,
