@@ -1,4 +1,6 @@
 import os
+import sys
+import signal
 import subprocess
 import platform
 from tools.colors import Colors
@@ -63,13 +65,18 @@ class SceServiceHandler:
         if not docker_status['is_running']:
             self.colors.print_red('To run MongoDB, ensure your Docker daemon is running.')
             return
-
-        subprocess.Popen(
-            f'''docker run -p 27017:27017 -v {self.mongo_volume_path}:/data/db mongo''',
-            stdin=subprocess.DEVNULL,
-            shell=True
-        )
         
+        
+        if self.user_os == 'Windows':
+            subprocess.check_call(
+                f'''docker run -it -p 27017:27017 -v {self.mongo_volume_path}:/data/db mongo''',
+                shell=True
+            )
+        else:
+            subprocess.run(
+                f'''docker run -it -p 27017:27017 -v {self.mongo_volume_path}:/data/db mongo''',
+                shell=True
+            )
 
     def run_core_v4(self):
         self.run_mongodb()
