@@ -43,9 +43,10 @@ class SceServiceHandler:
                     elif service == 'mongo':
                         self.run_mongodb(len(self.services) > 1)
                     else:
-                        subprocess.check_call(self.service_dict[service],
+                        subprocess.Popen(self.service_dict[service],
                                             shell=True)
         except KeyboardInterrupt as err:
+            print("whyyyeeeeee")
             if self.mongo_container_id:
                 subprocess.Popen(
                     f'docker stop {self.mongo_container_id}',
@@ -71,12 +72,18 @@ class SceServiceHandler:
             self.colors.print_red('To run MongoDB, ensure your Docker daemon is running.')
             return
     
-        maybe_detached = '-d' if detached else ''
-        maybe_stdout = subprocess.PIPE if detached else None
+        maybe_detached = ''
+        maybe_stdout = None
+        if detached:
+            subprocess_function = subprocess.Popen 
+            maybe_detached = '-d'
+            maybe_stdout = subprocess.PIPE
+        elif self.user_os == 'Windows':
+            subprocess_function = subprocess.check_call
+        else:
+            subprocess_function = subprocess.run
 
         docker_command = f'''docker run -it -p 27017:27017 {maybe_detached} -v {self.mongo_volume_path}:/data/db mongo'''
-
-        subprocess_function = subprocess.Popen #s.check_call if self.user_os == 'Windows' else subprocess.run
         p = subprocess_function(
             docker_command,
             stdout=maybe_stdout,
@@ -88,8 +95,8 @@ class SceServiceHandler:
 
     def run_core_v4(self):
         self.run_mongodb(True)
-        subprocess.Popen(self.service_dict['frontend'], shell=True).communicate()
-        subprocess.Popen(self.service_dict['server'], shell=True).communicate()
+        subprocess.Popen(self.service_dict['frontend'], shell=True)
+        subprocess.Popen(self.service_dict['server'], shell=True)
 
     def run_discord_bot(self):
         subprocess.Popen('cd SCE-discord-bot && npm start', shell=True).communicate()
