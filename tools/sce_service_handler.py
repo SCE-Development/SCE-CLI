@@ -9,7 +9,7 @@ class SceServiceHandler:
     colors = Colors()
     mongo_volume_path = None
 
-    def __init__(self, services):
+    def __init__(self, services, dbpath=None):
         self.user_os = platform.system()
         self.py_command = "py" if self.user_os == "Windows" else "python3"
         self.services = services
@@ -21,7 +21,7 @@ class SceServiceHandler:
             'mongo': True,
         }
         
-        set_mongo_path_res = self.set_mongo_volume_path()
+        set_mongo_path_res = self.set_mongo_volume_path(dbpath)
         if set_mongo_path_res['error']:
             self.colors.print_red(set_mongo_path_res['message'])
             return
@@ -66,7 +66,6 @@ class SceServiceHandler:
 
         subprocess.Popen(
             f'''docker run -p 27017:27017 -v {self.mongo_volume_path}:/data/db mongo''',
-            stdout=subprocess.DEVNULL,
             stdin=subprocess.DEVNULL,
             shell=True
         )
@@ -84,7 +83,7 @@ class SceServiceHandler:
         self.run_core_v4()
         self.run_discord_bot()
 
-    def set_mongo_volume_path(self, path='default'):
+    def set_mongo_volume_path(self, path=None):
         sce_path = os.environ.get('SCE_PATH')
         if not sce_path:
             self.colors.print_red(
@@ -99,7 +98,7 @@ class SceServiceHandler:
             }
 
         self.mongo_volume_path = os.path.join(sce_path, 'mongo', 'data', 'db')
-        if path == 'default':
+        if path is None:
             return { 'error': False }
 
         try:
