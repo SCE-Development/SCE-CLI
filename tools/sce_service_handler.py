@@ -9,7 +9,6 @@ from tools.shared_utils import check_docker_status
 
 class SceServiceHandler:
     colors = Colors()
-    mongo_volume_path = None
 
     def __init__(self, services, dbpath=None):
         self.user_os = platform.system()
@@ -22,39 +21,44 @@ class SceServiceHandler:
             'core-v4': True,
             'mongo': True,
         }
-        
-        set_mongo_path_res = self.set_mongo_volume_path(dbpath)
-        if set_mongo_path_res['error']:
-            self.colors.print_red(set_mongo_path_res['message'])
-            return
+        self.set_mongo_volume_path(dbpath)
+        self.mongo_container_id = None
 
     def run_services(self):
-        if not self.services:
-            self.all_systems_go()
-        else:
-            for service in self.services:
-                if service == 'print':
-                    self.print_usage()
-                elif service not in self.service_dict:
-                    print(
-                        f"{service} does not exist. Avaliable services are:",
-                        [item for item in list(self.service_dict.keys())])
-                elif service == 'core-v4':
-                    self.run_core_v4()
-                elif service == 'discord':
-                    self.run_discord_bot()
-                elif service == 'mongo':
-                    self.run_mongodb()
-                else:
-                    subprocess.check_call(self.service_dict[service],
-                                          shell=True)
+        try:
+            if not self.services:
+                self.all_systems_go()
+            else:
+                for service in self.services:
+                    if service == 'print':
+                        self.print_usage()
+                    elif service not in self.service_dict:
+                        print(
+                            f"{service} does not exist. Avaliable services are:",
+                            [item for item in list(self.service_dict.keys())])
+                    elif service == 'core-v4':
+                        self.run_core_v4()
+                    elif service == 'discord':
+                        self.run_discord_bot()
+                    elif service == 'mongo':
+                        self.run_mongodb(len(self.services) > 1)
+                    else:
+                        subprocess.check_call(self.service_dict[service],
+                                            shell=True)
+        except KeyboardInterrupt as err:
+            if self.mongo_container_id:
+                subprocess.Popen(
+                    f'docker stop {self.mongo_container_id}',
+                    stdout=subprocess.DEVNULL,
+                    shell=True
+                )
 
     def print_usage(self):
         print('Available Services (case sensitive):')
         for key in self.service_dict:
             print('\t', key)
 
-    def run_mongodb(self):
+    def run_mongodb(self, detached=False):
         docker_status = check_docker_status()
         if not docker_status['is_installed']:
             self.colors.print_red(
@@ -62,29 +66,33 @@ class SceServiceHandler:
                 'If you already have, you may need to reload your shell.'
             )
             return
+
         if not docker_status['is_running']:
             self.colors.print_red('To run MongoDB, ensure your Docker daemon is running.')
             return
-        
-        
-        if self.user_os == 'Windows':
-            subprocess.check_call(
-                f'''docker run -it -p 27017:27017 -v {self.mongo_volume_path}:/data/db mongo''',
-                shell=True
-            )
-        else:
-            subprocess.run(
-                f'''docker run -it -p 27017:27017 -v {self.mongo_volume_path}:/data/db mongo''',
-                shell=True
-            )
+    
+        maybe_detached = '-d' if detached else ''
+        maybe_stdout = subprocess.PIPE if detached else None
+
+        docker_command = f'''docker run -it -p 27017:27017 {maybe_detached} -v {self.mongo_volume_path}:/data/db mongo'''
+
+        subprocess_function = subprocess.Popen #s.check_call if self.user_os == 'Windows' else subprocess.run
+        p = subprocess_function(
+            docker_command,
+            stdout=maybe_stdout,
+            shell=True
+        )
+        if detached:
+            out = p.stdout.read().decode('utf-8')
+            self.mongo_container_id = out
 
     def run_core_v4(self):
-        self.run_mongodb()
-        subprocess.Popen(self.service_dict['frontend'], shell=True)
-        subprocess.Popen(self.service_dict['server'], shell=True)
+        self.run_mongodb(True)
+        subprocess.Popen(self.service_dict['frontend'], shell=True).communicate()
+        subprocess.Popen(self.service_dict['server'], shell=True).communicate()
 
     def run_discord_bot(self):
-        subprocess.Popen('cd SCE-discord-bot && npm start', shell=True)
+        subprocess.Popen('cd SCE-discord-bot && npm start', shell=True).communicate()
 
     def all_systems_go(self):
         self.run_core_v4()
@@ -94,32 +102,12 @@ class SceServiceHandler:
         sce_path = os.environ.get('SCE_PATH')
         if not sce_path:
             self.colors.print_red(
-                
-            )
-            return {
-                'error': True,
-                'message': (
-                    'Error: Please run the setup command first. ' \
+                'Error: Please run the setup command first. ' \
                     'If you already have, you may need to reload your shell.'
-                )
-            }
+            )
+            sys.exit(1)
 
-        self.mongo_volume_path = os.path.join(sce_path, 'mongo', 'data', 'db')
         if path is None:
-            return { 'error': False }
-
-        try:
-            os.mkdir(path)
+            self.mongo_volume_path = os.path.join(sce_path, 'mongo', 'data', 'db')
+        else:
             self.mongo_volume_path = path
-            return { 'error': False }
-        except FileExistsError:
-            self.mongo_volume_path = path
-            return { 'error': False }
-        except Exception:
-            return {
-                'error': True,
-                'message': (
-                    'The path you entered does not appear to be a valid directory.' \
-                    'Please check it and try again.'
-                )
-            }
