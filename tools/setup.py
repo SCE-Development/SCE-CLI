@@ -2,7 +2,7 @@ import subprocess
 import os
 import platform
 from tools.colors import Colors
-from tools.shared_utils import check_docker_status
+from tools.utils import check_docker_status
 
 
 class SceSetupTool:
