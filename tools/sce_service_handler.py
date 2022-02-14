@@ -39,7 +39,7 @@ class SceServiceHandler:
                 elif service == 'discord':
                     self.run_discord_bot()
                 elif service == 'mongo':
-                    self.run_mongodb(len(self.services) > 1)
+                    self.run_mongodb()
                 else:
                     subprocess.Popen(self.service_dict[service],
                                         shell=True)
@@ -49,7 +49,7 @@ class SceServiceHandler:
         for key in self.service_dict:
             print('\t', key)
 
-    def run_mongodb(self, detached=False):
+    def run_mongodb(self):
         docker_status = check_docker_status()
         if not docker_status['is_installed']:
             self.colors.print_red(
@@ -71,7 +71,7 @@ class SceServiceHandler:
         )
 
     def run_core_v4(self):
-        self.run_mongodb(True)
+        self.run_mongodb()
         subprocess.Popen(self.service_dict['frontend'], shell=True)
         subprocess.Popen(self.service_dict['server'], shell=True)
 

@@ -1,7 +1,6 @@
 import argparse
 import platform
 import os
-import sys
 from tools.setup import SceSetupTool
 from tools.sce_service_handler import SceServiceHandler
 from tools.sce_presubmit_handler import ScePresubmitHandler
