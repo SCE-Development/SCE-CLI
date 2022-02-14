@@ -71,15 +71,12 @@ class SceServiceHandler:
             self.colors.print_red('To run MongoDB, ensure your Docker daemon is running.')
             return
     
-        maybe_detached = '-d' if detached else ''
-        maybe_stdout = subprocess.PIPE if detached else None
-
-        docker_command = f'''docker run -it -p 27017:27017 {maybe_detached} -v {self.mongo_volume_path}:/data/db mongo'''
+        docker_command = f'''docker run -it -p 27017:27017 -d -v {self.mongo_volume_path}:/data/db mongo'''
 
         subprocess_function = subprocess.Popen #s.check_call if self.user_os == 'Windows' else subprocess.run
         p = subprocess_function(
             docker_command,
-            stdout=maybe_stdout,
+            stdout=subprocess.PIPE,
             shell=True
         )
         if detached:

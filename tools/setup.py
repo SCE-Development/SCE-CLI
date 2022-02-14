@@ -114,9 +114,9 @@ class SceSetupTool:
                 self.write_alias_to_file(BASH_PROFILE_PATH)
 
     def add_alias_windows(self):
-        subprocess.check_call("pip install cx_Freeze",
+        subprocess.check_call("py -m pip install cx_Freeze",
                               stderr=subprocess.STDOUT, shell=True)
-        subprocess.check_call("pip install idna",
+        subprocess.check_call("py -m pip install idna",
                               stderr=subprocess.STDOUT, shell=True)
         subprocess.check_call("py setup.py build",
                               stderr=subprocess.STDOUT, shell=True)
@@ -188,11 +188,11 @@ class SceSetupTool:
     def setup(self):
         self.color.print_purple(f'Detected OS: {self.operating}')
 
-        self.check_docker()
-        self.check_node()
+        # self.check_docker()
+        # self.check_node()
 
-        self.setup_core_v4()
-        self.setup_discord_bot()
+        # self.setup_core_v4()
+        # self.setup_discord_bot()
         self.setup_dev()
 
         self.add_sce_alias()

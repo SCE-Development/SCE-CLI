@@ -2,7 +2,7 @@ from cx_Freeze import setup, Executable
 
 base = None
 
-executables = [Executable("sce.py", base=base)]
+executables = [Executable(".//sce.py", base=base)]
 
 packages = ["idna"]
 options = {
