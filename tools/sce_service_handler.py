@@ -22,36 +22,27 @@ class SceServiceHandler:
             'mongo': True,
         }
         self.set_mongo_volume_path(dbpath)
-        self.mongo_container_id = None
 
     def run_services(self):
-        try:
-            if not self.services:
-                self.all_systems_go()
-            else:
-                for service in self.services:
-                    if service == 'print':
-                        self.print_usage()
-                    elif service not in self.service_dict:
-                        print(
-                            f"{service} does not exist. Avaliable services are:",
-                            [item for item in list(self.service_dict.keys())])
-                    elif service == 'core-v4':
-                        self.run_core_v4()
-                    elif service == 'discord':
-                        self.run_discord_bot()
-                    elif service == 'mongo':
-                        self.run_mongodb(len(self.services) > 1)
-                    else:
-                        subprocess.check_call(self.service_dict[service],
-                                            shell=True)
-        except KeyboardInterrupt as err:
-            if self.mongo_container_id:
-                subprocess.Popen(
-                    f'docker stop {self.mongo_container_id}',
-                    stdout=subprocess.DEVNULL,
-                    shell=True
-                )
+        if not self.services:
+            self.all_systems_go()
+        else:
+            for service in self.services:
+                if service == 'print':
+                    self.print_usage()
+                elif service not in self.service_dict:
+                    print(
+                        f"{service} does not exist. Avaliable services are:",
+                        [item for item in list(self.service_dict.keys())])
+                elif service == 'core-v4':
+                    self.run_core_v4()
+                elif service == 'discord':
+                    self.run_discord_bot()
+                elif service == 'mongo':
+                    self.run_mongodb(len(self.services) > 1)
+                else:
+                    subprocess.Popen(self.service_dict[service],
+                                        shell=True)
 
     def print_usage(self):
         print('Available Services (case sensitive):')
@@ -70,23 +61,19 @@ class SceServiceHandler:
         if not docker_status['is_running']:
             self.colors.print_red('To run MongoDB, ensure your Docker daemon is running.')
             return
-    
+
         docker_command = f'''docker run -it -p 27017:27017 -d -v {self.mongo_volume_path}:/data/db mongo'''
 
-        subprocess_function = subprocess.Popen #s.check_call if self.user_os == 'Windows' else subprocess.run
-        p = subprocess_function(
+        subprocess.Popen(
             docker_command,
             stdout=subprocess.PIPE,
             shell=True
         )
-        if detached:
-            out = p.stdout.read().decode('utf-8')
-            self.mongo_container_id = out
 
     def run_core_v4(self):
         self.run_mongodb(True)
-        subprocess.Popen(self.service_dict['frontend'], shell=True).communicate()
-        subprocess.Popen(self.service_dict['server'], shell=True).communicate()
+        subprocess.Popen(self.service_dict['frontend'], shell=True)
+        subprocess.Popen(self.service_dict['server'], shell=True)
 
     def run_discord_bot(self):
         subprocess.Popen('cd SCE-discord-bot && npm start', shell=True).communicate()
