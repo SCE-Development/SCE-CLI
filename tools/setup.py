@@ -35,11 +35,13 @@ class SceSetupTool:
             subprocess.check_call(command, stdout=self.devnull,
                                   stderr=subprocess.STDOUT, shell=True)
             self.color.print_yellow(name + " found")
+            return True
         except subprocess.CalledProcessError:
             self.color.print_red(name + " not found")
             print("visit here to install: ")
             self.color.print_purple(link)
             input("press enter to continue: ")
+            return False
 
     def check_directory(self, name):
         """
