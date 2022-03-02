@@ -3,6 +3,7 @@ import os
 import platform
 from tools.colors import Colors
 from tools.utils import check_docker_status
+import sys
 
 
 class SceSetupTool:
@@ -32,8 +33,8 @@ class SceSetupTool:
             link (string): link to the site to install the software
         """
         try:
-            subprocess.check_call(command, stdout=self.devnull,
-                                  stderr=subprocess.STDOUT, shell=True)
+            print(f"command: {command}")
+            subprocess.check_call(command, shell=True)
             self.color.print_yellow(name + " found")
             return True
         except subprocess.CalledProcessError:
@@ -76,13 +77,28 @@ class SceSetupTool:
             self.docker_is_running = False
         self.color.print_yellow('Docker found')
 
+    def install_prompt(self, program):
+        if program == "node":
+            if self.operating == "Linux" or self.operating == "Darwin":
+                prompt = None
+                while prompt != 'y' and prompt != 'n':
+                    prompt = input('install node?(y or n): ')
+                if prompt == 'y':
+                    subprocess.check_call('curl -o- https://raw.githubusercontent.com/nvm-sh'
+                            f'/nvm/v0.39.0/install.sh | {os.environ["SHELL"]}', 
+                            stderr=subprocess.STDOUT, shell=True)
+                    self.color.print_green(f"Installed Node! Close and reopen the terminal to use it")
+                    sys.exit()
+
     
     def check_node(self): 
         """
             This method checks for node installation
         """
-        self.check_installation("npm", "npm -v",
+        has_node = self.check_installation("npm", "npm -v",
                                     "https://nodejs.org/en/download/")
+        if not has_node:
+            self.install_prompt("node")
 
     def write_alias_to_file(self, file_name):
         sce_path = os.getcwd()
