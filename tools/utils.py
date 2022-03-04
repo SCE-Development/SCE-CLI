@@ -35,3 +35,17 @@ def check_docker_status():
       'is_installed': True,
       'is_running': False
     }
+
+def ask_user(prompt, validator):
+"""
+this method continually prompts the user to enter a "valid" input. 
+validator should be a one argument function which returns a Boolean 
+(whether the input is valid or invalid)
+Returns:
+    the valid user input
+"""
+    ans = input(prompt)
+    while not validator(ans):
+        ans = input(prompt)
+    return ans
+
