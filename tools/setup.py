@@ -2,8 +2,7 @@ import subprocess
 import os
 import platform
 from tools.colors import Colors
-from tools.utils import check_docker_status
-
+from tools.utils import check_docker_status, prompt_user
 
 class SceSetupTool:
     """
@@ -15,6 +14,7 @@ class SceSetupTool:
     color = Colors()
     devnull = open(os.devnull, 'wb')
     docker_is_running = True
+    sce_path = os.getcwd()
 
     def __init__(self):
         self.operating = platform.system()
@@ -40,7 +40,7 @@ class SceSetupTool:
             print("visit here to install: ")
             self.color.print_purple(link)
             input("press enter to continue: ")
-
+    
     def check_directory(self, name):
         """
         This method checks for a given directory
@@ -53,10 +53,19 @@ class SceSetupTool:
             self.color.print_pink(name + " directory found")
         else:
             self.color.print_red(
-                name + " directory not found, cloning for you")
-            subprocess.check_call("git clone "
-                                  + "https://github.com/SCE-Development/"
-                                  + name, stderr=subprocess.STDOUT, shell=True)
+                name + ' directory not found')
+            custom_dir = prompt_user(f'would you like to link an existing clone of {name}'
+                    ' to the sce cli?(y or n): ', lambda ans: ans == 'y' or ans == 'n')
+            if custom_dir == 'y':
+                user_project_dir = prompt_user(f'enter a valid, absolute path of {name}: ',
+                        lambda path: os.path.isdir(path) and os.path.isabs(path))
+
+                os.symlink(user_project_dir, os.path.join(self.sce_path, name),
+                        target_is_directory=True)
+            else:
+                subprocess.check_call("git clone "
+                                      + "https://github.com/SCE-Development/"
+                                      + name, stderr=subprocess.STDOUT, shell=True)
 
     def check_docker(self):
         """
@@ -83,7 +92,6 @@ class SceSetupTool:
                                     "https://nodejs.org/en/download/")
 
     def write_alias_to_file(self, file_name):
-        sce_path = os.getcwd()
         try:
             subprocess.check_call(
                 f'grep -rl \"alias sce=\" {file_name}',
@@ -91,9 +99,9 @@ class SceSetupTool:
         except subprocess.CalledProcessError:
             with open(file_name, 'a') as file:
                 file.write('\n')
-                file.write(f"export SCE_PATH={sce_path}")
+                file.write(f"export SCE_PATH={self.sce_path}")
                 file.write('\n')
-                file.write(f'alias sce="python3 {sce_path}/sce.py"')
+                file.write(f'alias sce="python3 {self.sce_path}/sce.py"')
                 file.write('\n')
 
     def add_alias_unix(self):
@@ -185,6 +193,8 @@ class SceSetupTool:
             stderr=subprocess.STDOUT, shell=True)
 
     def setup(self):
+        os.chdir(self.sce_path)
+
         self.color.print_purple(f'Detected OS: {self.operating}')
 
         self.check_docker()
