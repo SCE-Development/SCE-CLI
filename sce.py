@@ -6,24 +6,28 @@ from tools.sce_service_handler import SceServiceHandler
 from tools.sce_presubmit_handler import ScePresubmitHandler
 
 parser = argparse.ArgumentParser()
-parser.add_argument(
-    'command', help='Setup for the SCE tool to run ' +
-    '(setup, run, presubmit, etc.)')
-parser.add_argument(
-    '--project', '-p', nargs='+', help='Project to run presubmit checks for.')
-parser.add_argument(
-    '--proto', nargs=1,
-    help='The language(s) to generate proto code.')
-parser.add_argument(
-    '--language', nargs='+',
-    help='The language(s) to generate proto code.')
-parser.add_argument(
+sub_parser = parser.add_subparsers(required=True, dest='command')
+
+setup_parser = sub_parser.add_parser('setup', help='Setup the sce tool')
+
+run_parser = sub_parser.add_parser('run', help='Run an sce service')
+run_parser.add_argument(
     '--service', '-s', nargs='*',
-    help='SCE Service name')
-parser.add_argument(
+    help='SCE Service name'
+)
+run_parser.add_argument(
     '--dbpath',
     help='Specify a path for the volume used by MongoDB.'
 )
+
+presubmit_parser = sub_parser.add_parser('presubmit', help='Project to run presubmit checks for')
+presubmit_parser.add_argument(
+    '--project', '-p', nargs='+',
+    help='Project to run presubmit checks for.'
+)
+
+test_parser = sub_parser.add_parser('test')
+
 args = parser.parse_args()
 
 # cd into the dev folder if we are in windows.
