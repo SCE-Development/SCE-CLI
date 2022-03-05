@@ -36,7 +36,6 @@ def check_docker_status():
       'is_running': False
     }
 
-def ask_user(prompt, validator):
 """
 this method continually prompts the user to enter a "valid" input. 
 validator should be a one argument function which returns a Boolean 
@@ -44,6 +43,7 @@ validator should be a one argument function which returns a Boolean
 Returns:
     the valid user input
 """
+def prompt_user(prompt, validator):
     ans = input(prompt)
     while not validator(ans):
         ans = input(prompt)
