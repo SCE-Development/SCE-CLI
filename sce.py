@@ -26,8 +26,6 @@ presubmit_parser.add_argument(
     help='Project to run presubmit checks for.'
 )
 
-test_parser = sub_parser.add_parser('test')
-
 args = parser.parse_args()
 
 # cd into the dev folder if we are in windows.
@@ -46,6 +44,4 @@ else:
     elif args.command == 'run':
         handler = SceServiceHandler(args.service, args.dbpath)
         handler.run_services()
-    elif args.command == 'test':
-        setup = SceSetupTool()
-        setup.add_sce_alias()
+
