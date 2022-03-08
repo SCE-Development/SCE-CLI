@@ -40,6 +40,18 @@ class SceSetupTool:
             print("visit here to install: ")
             self.color.print_purple(link)
             input("press enter to continue: ")
+
+    def link(self, name):
+        custom_dir = prompt_user(f'would you like to link an existing clone of {name}'
+                ' to the sce cli?(y or n): ', lambda ans: ans == 'y' or ans == 'n')
+        if custom_dir == 'y':
+            user_project_dir = prompt_user(f'enter a valid, absolute path of {name}: ',
+                    lambda path: os.path.isdir(path) and os.path.isabs(path))
+
+            os.symlink(user_project_dir, os.path.join(self.sce_path, name),
+                    target_is_directory=True)
+            return True
+        return False
     
     def check_directory(self, name):
         """
@@ -52,17 +64,8 @@ class SceSetupTool:
         if os.path.isdir(name):
             self.color.print_pink(name + " directory found")
         else:
-            self.color.print_red(
-                name + ' directory not found')
-            custom_dir = prompt_user(f'would you like to link an existing clone of {name}'
-                    ' to the sce cli?(y or n): ', lambda ans: ans == 'y' or ans == 'n')
-            if custom_dir == 'y':
-                user_project_dir = prompt_user(f'enter a valid, absolute path of {name}: ',
-                        lambda path: os.path.isdir(path) and os.path.isabs(path))
-
-                os.symlink(user_project_dir, os.path.join(self.sce_path, name),
-                        target_is_directory=True)
-            else:
+            self.color.print_red(name + ' directory not found')
+            if not self.link(name):
                 subprocess.check_call("git clone "
                                       + "https://github.com/SCE-Development/"
                                       + name, stderr=subprocess.STDOUT, shell=True)
