@@ -104,21 +104,13 @@ class SceSetupTool:
                 file.write(f'alias sce="python3 {self.sce_path}/sce.py"')
                 file.write('\n')
 
+    def unix_rc_path(self):
+        SHELL = os.environ['SHELL'][os.environ['SHELL'].rfind('/')+1:]
+        HOME_PATH = os.environ['HOME']
+        return f'{HOME_PATH}/.{SHELL}rc'
+
     def add_alias_unix(self):
-        HOME_PATH = os.environ["HOME"]
-        BASHRC_PATH = f'{HOME_PATH}/.bashrc'
-        if self.operating == "Darwin":
-            ZSHRC_PATH = f"{HOME_PATH}/.zshrc"
-            if os.path.isfile(BASHRC_PATH):
-                self.write_alias_to_file(BASHRC_PATH)
-            if os.path.isfile(ZSHRC_PATH):
-                self.write_alias_to_file(ZSHRC_PATH)
-        elif self.operating == "Linux":
-            BASH_PROFILE_PATH = f"{HOME_PATH}/.bash_profile"
-            if os.path.isfile(BASHRC_PATH):
-                self.write_alias_to_file(BASHRC_PATH)
-            elif os.path.isfile(BASH_PROFILE_PATH):
-                self.write_alias_to_file(BASH_PROFILE_PATH)
+        self.write_alias_to_file(self.unix_rc_path())
 
     def add_alias_windows(self):
         subprocess.check_call("py -m pip install cx_Freeze",
