@@ -46,7 +46,7 @@ class SceSetupTool:
                 ' to the sce cli?(y or n): ', lambda ans: ans == 'y' or ans == 'n')
         if custom_dir == 'y':
             user_project_dir = prompt_user(f'enter a valid path of {name}: ',
-                    lambda path: os.path.isdir(path) and os.path.isabs(path))
+                    lambda path: os.path.isdir(path))
 
             os.symlink(user_project_dir, os.path.join(self.sce_path, name),
                     target_is_directory=True)
