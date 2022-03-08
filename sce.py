@@ -5,6 +5,7 @@ from tools.setup import SceSetupTool
 from tools.sce_service_handler import SceServiceHandler
 from tools.sce_presubmit_handler import ScePresubmitHandler
 
+sce_dir = os.getcwd()
 parser = argparse.ArgumentParser()
 sub_parser = parser.add_subparsers(required=True, dest='command')
 
@@ -26,13 +27,27 @@ presubmit_parser.add_argument(
     help='Project to run presubmit checks for.'
 )
 
+def directory(path):
+    if os.path.isdir(path):
+        return path
+    else:
+        raise ValueError(f'{path}: No such directory')
+
+linker_parser = sub_parser.add_parser('link', help='Link existing sce project clones')
+linker_parser.add_argument(
+    'path', help='Path to project clone', type=directory
+)
+linker_parser.add_argument(
+    'project', help='Name of project to link against'
+)
+
 args = parser.parse_args()
 
 # cd into the dev folder if we are in windows.
 # we dont need to do it for unix/macos because
 # changing the directory is part of the sce alias.
 if args.command == 'setup':
-    setup = SceSetupTool()
+    setup = SceSetupTool(sce_dir)
     setup.setup()
 else:
     if platform.system() == 'Windows':
@@ -44,4 +59,5 @@ else:
     elif args.command == 'run':
         handler = SceServiceHandler(args.service, args.dbpath)
         handler.run_services()
-
+    elif args.command == 'link':
+        os.symlink(os.path.abspath(args.path), os.path.join(sce_dir, args.project))
