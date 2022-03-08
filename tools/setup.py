@@ -45,7 +45,7 @@ class SceSetupTool:
         custom_dir = prompt_user(f'would you like to link an existing clone of {name}'
                 ' to the sce cli?(y or n): ', lambda ans: ans == 'y' or ans == 'n')
         if custom_dir == 'y':
-            user_project_dir = prompt_user(f'enter a valid, absolute path of {name}: ',
+            user_project_dir = prompt_user(f'enter a valid path of {name}: ',
                     lambda path: os.path.isdir(path) and os.path.isabs(path))
 
             os.symlink(user_project_dir, os.path.join(self.sce_path, name),
