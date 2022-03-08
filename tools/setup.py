@@ -14,10 +14,11 @@ class SceSetupTool:
     color = Colors()
     devnull = open(os.devnull, 'wb')
     docker_is_running = True
-    sce_path = os.getcwd()
+    sce_path = "" # passed in through __init__
 
-    def __init__(self):
+    def __init__(self, sce_path):
         self.operating = platform.system()
+        self.sce_path = sce_path
 
     def check_installation(self, name, command, link):
         """
@@ -187,7 +188,8 @@ class SceSetupTool:
             f'{command} -m pip install -r ./requirements.txt --user',
             stderr=subprocess.STDOUT, shell=True)
 
-    def setup(self):
+    def setup(self, sce_dir):
+        self.sce_dir = sce_dir
         self.color.print_purple(f'Detected OS: {self.operating}')
 
         self.check_docker()
