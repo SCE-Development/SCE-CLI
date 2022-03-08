@@ -188,8 +188,7 @@ class SceSetupTool:
             f'{command} -m pip install -r ./requirements.txt --user',
             stderr=subprocess.STDOUT, shell=True)
 
-    def setup(self, sce_dir):
-        self.sce_dir = sce_dir
+    def setup(self):
         self.color.print_purple(f'Detected OS: {self.operating}')
 
         self.check_docker()
