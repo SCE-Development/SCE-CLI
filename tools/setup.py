@@ -47,7 +47,7 @@ class SceSetupTool:
         if custom_dir == 'y':
             user_project_dir = prompt_user(f'enter a valid path of {name}: ',
                     lambda path: os.path.isdir(path))
-
+            user_project_dir = os.path.abspath(user_project_dir)
             os.symlink(user_project_dir, os.path.join(self.sce_path, name),
                     target_is_directory=True)
             return True
