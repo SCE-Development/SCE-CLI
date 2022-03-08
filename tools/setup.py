@@ -185,8 +185,6 @@ class SceSetupTool:
             stderr=subprocess.STDOUT, shell=True)
 
     def setup(self):
-        os.chdir(self.sce_path)
-
         self.color.print_purple(f'Detected OS: {self.operating}')
 
         self.check_docker()
