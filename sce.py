@@ -35,10 +35,12 @@ def directory(path):
 
 linker_parser = sub_parser.add_parser('link', help='Link existing sce project clones')
 linker_parser.add_argument(
-    'path', help='Path to project clone', type=directory
+    'project', help='Name of project to link against'
 )
 linker_parser.add_argument(
-    'project', help='Name of project to link against'
+    '-p', '--path',
+    help='path to project clone (working directory by default)', 
+    type=directory, default=os.getcwd()
 )
 
 args = parser.parse_args()
