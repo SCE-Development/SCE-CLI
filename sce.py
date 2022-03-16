@@ -5,7 +5,7 @@ from tools.setup import SceSetupTool
 from tools.sce_service_handler import SceServiceHandler
 from tools.sce_presubmit_handler import ScePresubmitHandler
 
-sce_dir = os.getcwd()
+sce_dir = os.environ['SCE_PATH']
 parser = argparse.ArgumentParser()
 sub_parser = parser.add_subparsers(required=True, dest='command')
 
