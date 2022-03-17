@@ -1,5 +1,13 @@
+Core-v4
+SCE-discord-bot
+discord-bot
+quasar
+
 Core-v4/
 SCE-discord-bot/
+discord-bot/
+quasar/
+
 *.pyc
 .idea/
 build/
