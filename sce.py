@@ -59,6 +59,7 @@ else:
         test_project = ScePresubmitHandler(args.project)
         test_project.handle_testing()
     elif args.command == 'run':
+        os.chdir(sce_dir)
         handler = SceServiceHandler(args.service, args.dbpath)
         handler.run_services()
     elif args.command == 'link':
