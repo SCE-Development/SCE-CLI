@@ -49,3 +49,10 @@ def prompt_user(prompt, validator):
         ans = input(prompt)
     return ans
 
+"""
+abstraction on top of prompt_user() to prompt for yes or no.
+"""
+def prompt_user_yn(prompt):
+    return prompt_user(prompt, lambda inp: inp == 'y' or inp == 'n')
+
+

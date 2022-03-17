@@ -2,7 +2,7 @@ import subprocess
 import os
 import platform
 from tools.colors import Colors
-from tools.utils import check_docker_status, prompt_user
+from tools.utils import check_docker_status, prompt_user, prompt_user_yn
 
 class SceSetupTool:
     """
@@ -42,8 +42,8 @@ class SceSetupTool:
             input("press enter to continue: ")
 
     def link(self, name):
-        custom_dir = prompt_user(f'would you like to link an existing clone of {name}'
-                ' to the sce cli?(y or n): ', lambda ans: ans == 'y' or ans == 'n')
+        custom_dir = prompt_user_yn('would you like to link an existing' 
+                f' clone of {name} to the sce cli?(y or n): ')
         if custom_dir == 'y':
             user_project_dir = prompt_user(f'enter a valid path of {name}: ',
                     lambda path: os.path.isdir(path))
