@@ -14,7 +14,6 @@ class SceSetupTool:
     color = Colors()
     devnull = open(os.devnull, 'wb')
     docker_is_running = True
-    sce_path = "" # passed in through __init__
 
     def __init__(self, sce_path):
         self.operating = platform.system()
