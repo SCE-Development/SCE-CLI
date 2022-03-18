@@ -1,12 +1,10 @@
 # to ignore generated symlinks
 Core-v4
 SCE-discord-bot
-discord-bot
 Quasar
 
 Core-v4/
 SCE-discord-bot/
-discord-bot/
 Quasar/
 
 *.pyc
