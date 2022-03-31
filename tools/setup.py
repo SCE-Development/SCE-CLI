@@ -193,8 +193,8 @@ class SceSetupTool:
     def setup(self):
         self.color.print_purple(f'Detected OS: {self.operating}')
 
-        #self.check_docker()
-        #self.check_node()
+        self.check_docker()
+        self.check_node()
 
         self.setup_core_v4()
         self.setup_discord_bot()
