@@ -13,7 +13,7 @@ setup_parser = sub_parser.add_parser('setup', help='Setup the sce tool')
 
 run_parser = sub_parser.add_parser('run', help='Run an sce service')
 run_parser.add_argument(
-    '--service', '-s', nargs='*',
+    'service', nargs='*',
     help='SCE Service name'
 )
 run_parser.add_argument(
