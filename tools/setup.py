@@ -51,6 +51,7 @@ class SceSetupTool:
         """
         if os.path.isdir(name):
             self.color.print_pink(name + " directory found")
+            return True
         else:
             self.color.print_red(name + ' directory not found')
             clone_yn = prompt_user_yn(f'would you like to clone {name} (y or n)? ')
@@ -58,6 +59,7 @@ class SceSetupTool:
                 subprocess.check_call("git clone "
                                       + "https://github.com/SCE-Development/"
                                       + name, stderr=subprocess.STDOUT, shell=True)
+                return True
             else:
                 self.color.print_red(f'skipping setup for {name}. If you wish to clone {name}'
                         ' and link it with sce later, run:')
@@ -66,6 +68,7 @@ class SceSetupTool:
                 self.color.print_red(f'and run the setup for {name} with: ')
                 print(f'    sce setup -p {name}')
                 input('Enter to continue: ')
+                return False
 
     def check_docker(self):
         """
@@ -140,7 +143,8 @@ class SceSetupTool:
         """
         This method checks for the corev4 directory
         """
-        self.check_directory("Core-v4")
+        if not self.check_directory("Core-v4"):
+            return
         os.chdir("Core-v4")
         subprocess.check_call(
             "npm install", stderr=subprocess.STDOUT, shell=True)
@@ -158,7 +162,9 @@ class SceSetupTool:
         """
         This method checks for the discord bot directory
         """
-        self.check_directory("SCE-discord-bot")
+
+        if not self.check_directory("SCE-discord-bot"):
+            return
         os.chdir("SCE-discord-bot")
         copy_command = "copy" if self.operating == "Windows" else "cp"
         if not os.path.exists("config.json"):
@@ -187,8 +193,8 @@ class SceSetupTool:
     def setup(self):
         self.color.print_purple(f'Detected OS: {self.operating}')
 
-        self.check_docker()
-        self.check_node()
+        #self.check_docker()
+        #self.check_node()
 
         self.setup_core_v4()
         self.setup_discord_bot()
