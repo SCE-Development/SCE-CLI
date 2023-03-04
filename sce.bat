@@ -3,11 +3,11 @@
 setlocal ENABLEDELAYEDEXPANSION
 
 REM aliases for the sce dev projects
-set COREV4_OPTIONS="core-v4" "corev4" "cv4" "c4" "c"
+set CLARK_OPTIONS="clark" "clrk" "ck" "c"
 set QUASAR_OPTIONS="quasar" "q" "idsmile"
 set DISCORD_BOT_OPTIONS="sce-discord-bot" "discord-bot" "discord" "bot" "d"
 set GITHUB_BASE_URL=https://github.com/SCE-Development/
-set COREV4_REPO_NAME=Core-v4
+set CLARK_REPO_NAME=Clark
 set QUASAR_REPO_NAME=Quasar
 set SCE_DISCORD_BOT_REPO_NAME=SCE-discord-bot
 
@@ -51,9 +51,9 @@ REM set the varible %name% to the resolved repo.
     REM https://stackoverflow.com/a/38481845
     SET name=""
     SET repo_to_link="%2%"
-    (for %%a in (%COREV4_OPTIONS%) do (
+    (for %%a in (%CLARK_OPTIONS%) do (
         if %repo_to_link% == %%a (
-            SET name=%COREV4_REPO_NAME%
+            SET name=%CLARK_REPO_NAME%
             goto :%1%
         )
     ))
@@ -93,7 +93,7 @@ REM set the varible %name% to the resolved repo.
         goto :print_repo_not_found
     )
     cd %REPO_LOCATION%
-    if %name%==%COREV4_REPO_NAME% (
+    if %name%==%CLARK_REPO_NAME% (
         copy api\config\config.example.json  api\config\config.json
         copy src\config\config.example.json  src\config\config.json
     ) else if %name%==%QUASAR_REPO_NAME% (
@@ -140,7 +140,8 @@ REM set the varible %name% to the resolved repo.
 :print_repo_nicknames
     echo.
     echo each repo has nicknames:
-    echo Core-v4:core-v4, corev4, cv4, c4, c
+set CLARK_OPTIONS="clark" "clrk" "ck" "c"
+    echo Clark:clark, clrk, ck, c
     echo Quasar:quasar, q, idsmile
     echo SCE-discod-bot:sce-discord-bot, discord-bot, discord, bot, d
     REM assumes this was printed when the user incorrectly used the command
