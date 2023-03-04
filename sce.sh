@@ -3,7 +3,8 @@
 function print_repo_nicknames {
     echo
     echo "each repo has nicknames:"
-    echo "Core-v4:core-v4, corev4, cv4, c4, c"
+    # echo "Core-v4:core-v4, corev4, cv4, c4, c"
+    echo "Clark:clark, dog, clrk, ck, c"
     echo "Quasar:quasar, q, idsmile"
     echo "SCE-discod-bot:sce-discord-bot, discord-bot, discord, bot, d"
 }
@@ -30,14 +31,15 @@ SCE_COMMAND_DIRECTORY=$(echo $0 | rev |  cut -c7- | rev)
 GITHUB_BASE_HTTP_URL="https://github.com/SCE-Development/"
 # sce clone <repo> --ssh
 # sce clone <repo>
-# git@github.com:SCE-Development/Core-v4.git
+# git@github.com:SCE-Development/Clark.git
 GITHUB_BASE_SSH_URL="git@github.com:SCE-Development/"
 
-COREV4_REPO_NAME="Core-v4"
+CLARK_REPO_NAME="Clark"
 QUASAR_REPO_NAME="Quasar"
 SCE_DISCORD_BOT_REPO_NAME="SCE-discord-bot"
 
-COREV4_NAMES=("core-v4" "corev4" "cv4" "c4" "c") 
+CLARK_NAMES=("clark" "dog" "clrk" "ck" "c") 
+echo "Clark:clark, dog, clrk, ck, c"
 QUASAR_NAMES=("quasar" "q" "idsmile")
 SCE_DISCORD_BOT_NAMES=("sce-discord-bot" "discord-bot" "discord" "bot" "d")
 
@@ -55,8 +57,8 @@ function is_quasar_alias {
     return $result
 }
 
-function is_corev4_alias {
-    result=$(contains_element "$1" "${COREV4_NAMES[@]}")
+function is_clark_alias {
+    result=$(contains_element "$1" "${CLARK_NAMES[@]}")
     return $result
 }
 
@@ -84,10 +86,10 @@ then
     name=$QUASAR_REPO_NAME
 fi
 
-is_corev4_alias "$2"
+is_clark_alias "$2"
 if [ $? -eq 0 ]
 then
-    name=$COREV4_REPO_NAME
+    name=$CLARK_REPO_NAME
 fi
 
 is_discord_bot_alias "$2"
