@@ -140,7 +140,6 @@ REM set the varible %name% to the resolved repo.
 :print_repo_nicknames
     echo.
     echo each repo has nicknames:
-set CLARK_OPTIONS="clark" "clrk" "ck" "c"
     echo Clark:clark, clrk, ck, c
     echo Quasar:quasar, q, idsmile
     echo SCE-discod-bot:sce-discord-bot, discord-bot, discord, bot, d
