@@ -3,7 +3,6 @@
 function print_repo_nicknames {
     echo
     echo "each repo has nicknames:"
-    # echo "Core-v4:core-v4, corev4, cv4, c4, c"
     echo "Clark:clark, dog, clrk, ck, c"
     echo "Quasar:quasar, q, idsmile"
     echo "SCE-discod-bot:sce-discord-bot, discord-bot, discord, bot, d"
