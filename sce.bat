@@ -79,7 +79,7 @@ REM set the varible %name% to the resolved repo.
     REM see https://stackoverflow.com/a/1262726
     rmdir %NEW_JUNCTION% > nul 2>&1
     REM mklik /j <JUNCTION U WANNA CREATE> <ORIGINAL LOCATION>
-    SET mklik_params=%NEW_JUNCTION% %WHERE_COMMAND_WAS_RAN_FROM%
+    SET mklik_params= "%NEW_JUNCTION%" "%WHERE_COMMAND_WAS_RAN_FROM%"
     mklink /j %mklik_params%
     goto :exit_success
 
@@ -111,12 +111,12 @@ REM set the varible %name% to the resolved repo.
 
 :run
     REM run the docker container  
-    SET REPO_LOCATION=%SCE_COMMAND_DIRECTORY%%name%
+    SET REPO_LOCATION="%SCE_COMMAND_DIRECTORY%""%name%"
     REM if location doesnt exist, prompt the user to link the directory
     IF NOT EXIST %REPO_LOCATION% (
         goto :print_repo_not_found
     )
-    cd %REPO_LOCATION%
+    cd "%REPO_LOCATION%"
     IF %name%==%SCE_DISCORD_BOT_REPO_NAME% (
         docker-compose -f docker-compose.yml up
         goto :exit_success
