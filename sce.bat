@@ -8,11 +8,13 @@ set CLEEZY_OPTIONS="cleezy" "url" "z"
 set MONGODB_OPTIONS="mongo" "db" "mongodb"
 set QUASAR_OPTIONS="quasar" "q" "idsmile"
 set DISCORD_BOT_OPTIONS="sce-discord-bot" "discord-bot" "discord" "bot" "d"
+set SCETA_OPTIONS="sceta"
 set GITHUB_BASE_URL=https://github.com/SCE-Development/
 set CLARK_REPO_NAME=Clark
 set CLEEZY_REPO_NAME=cleezy
 set QUASAR_REPO_NAME=Quasar
 set SCE_DISCORD_BOT_REPO_NAME=SCE-discord-bot
+set SCETA_REPO_NAME=SCEta
 
 REM parse the location where:
 REM 1. the `sce` command was ran from in the command line
@@ -83,6 +85,12 @@ REM set the varible %name% to the resolved repo.
     (for %%a in (%DISCORD_BOT_OPTIONS%) do (
         if %repo_to_link% == %%a (
             SET name=%SCE_DISCORD_BOT_REPO_NAME%
+            goto :%1%
+        )
+    ))
+    (for %%a in (%SCETA_OPTIONS%) do (
+        if %repo_to_link% == %%a (
+            SET name=%SCETA_REPO_NAME%
             goto :%1%
         )
     ))
@@ -165,6 +173,7 @@ REM set the varible %name% to the resolved repo.
     echo MongoDB:mongo, db, mongodb
     echo Quasar:quasar, q, idsmile
     echo SCE-discod-bot:sce-discord-bot, discord-bot, discord, bot, d
+    echo SCEta:sceta
     REM assumes this was printed when the user incorrectly used the command
     goto :exit_error
 
