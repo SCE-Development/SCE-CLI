@@ -103,7 +103,13 @@ fi
 if [ $1 == "completion" ]
 then
     echo "# for the sce dev tool"
-    echo "alias sce=\"$(pwd)/sce.sh\""
+    if [ -n "$BASH_VERSION" ]; then
+        # Bash shell detected
+        echo "alias sce=\"$(pwd)/sce.sh\""
+    elif [ -n "$FISH_VERSION" ]; then
+        # Fish shell detected
+        echo "function sce; bash $(pwd)/sce.sh \$argv; end"
+    fi
     echo ""
     exit 0
 fi
