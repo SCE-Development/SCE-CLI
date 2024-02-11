@@ -102,15 +102,14 @@ fi
 
 if [ $1 == "completion" ]
 then
-    echo "# for the sce dev tool"
-    if [ -n "$BASH_VERSION" ]; then
-        # Bash shell detected
-        echo "alias sce=\"$(pwd)/sce.sh\""
-    elif [ -n "$FISH_VERSION" ]; then
+    if [ -n "$FISH_VERSION" ]; then
         # Fish shell detected
         echo "function sce; bash $(pwd)/sce.sh \$argv; end"
+        exit 0
     fi
-    echo ""
+    # For other shells (Bash, Zsh, etc.)
+    echo "# for the sce dev tool"
+    echo "alias sce=\"$(pwd)/sce.sh\""
     exit 0
 fi
 
