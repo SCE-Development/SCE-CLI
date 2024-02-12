@@ -110,6 +110,7 @@ then
     # For other shells (Bash, Zsh, etc.)
     echo "# for the sce dev tool"
     echo "alias sce=\"$(pwd)/sce.sh\""
+    echo ""
     exit 0
 fi
 
