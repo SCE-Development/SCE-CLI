@@ -1,0 +1,13 @@
+use sce_core
+
+show collections
+
+db.User.insertOne({
+    emailVerified: true,
+    accessLevel: 3,
+    pagesPrinted: 0,
+    password: '$2a$10$HWbBiWRso1IUgqnuV6t1hO6lCBWO7KTC/E3G1MsFoXKH7/l/4FVK2',
+    firstName: 'Development',
+    lastName: 'Account',
+    email: 'test@one.sce',
+  })

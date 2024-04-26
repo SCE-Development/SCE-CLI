@@ -17,6 +17,7 @@ function print_usage {
     echo "clone: clone the given repo from github."
     echo "run: run the repo using docker"
     echo "link: tell the sce tool where to find the repo on your computer"
+    echo "create: create a user for the SCE website"
     echo "setup: copy config.example.json in a repo to config.json"
     print_repo_nicknames
     exit 1
@@ -49,7 +50,7 @@ QUASAR_NAMES=("quasar" "q" "idsmile")
 SCE_DISCORD_BOT_NAMES=("sce-discord-bot" "discord-bot" "discord" "bot" "d")
 SCETA_NAMES=("sceta" "transit")
 
-VALID_COMMANDS=("link" "clone" "run" "setup" "completion")
+VALID_COMMANDS=("link" "clone" "run" "setup" "completion", "create")
 
 function contains_element {
   local e match="$1"
@@ -111,6 +112,12 @@ then
     echo "# for the sce dev tool"
     echo "alias sce=\"$(pwd)/sce.sh\""
     echo ""
+    exit 0
+fi
+
+if [ $1 == "create" ]
+then
+    cat $SCE_COMMAND_DIRECTORY"create_user.txt" | docker exec -i sce-mongodb-dev mongosh --shell --norc --quiet
     exit 0
 fi
 
