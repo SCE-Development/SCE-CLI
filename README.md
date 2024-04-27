@@ -86,3 +86,18 @@ sce run <project>
 where project can be `quasar`, `core-v4`, `discord` etc. See the above repo
  names section for all options.
 
+### Create
+This will create a test account when running the SCE website locally. Before running,
+ make sure you have MongoDB running with:
+```
+sce run db
+```
+Then, run the below command:
+```
+sce create
+```
+After running the SCE website locally, ensure you can log in with the email
+ `test@one.sce` and password `sce`
+
+
+
