@@ -40,6 +40,8 @@ IF "%1%"=="link"  (
     goto :extract_repo_name
 ) ELSE IF "%1%"=="setup" (
     goto :extract_repo_name
+) ELSE IF "%1%"=="create" (
+    goto :create_mongodb_user
 ) ELSE (
     goto :print_usage
 )
@@ -151,6 +153,10 @@ REM set the varible %name% to the resolved repo.
         goto :exit_success
     )
     docker-compose -f docker-compose.dev.yml up --build
+    goto :exit_success
+
+:create_mongodb_user
+    type %SCE_COMMAND_DIRECTORY%create_user.txt | docker exec -i sce-mongodb-dev mongosh --quiet --norc --shell
     goto :exit_success
 
 :print_command_usage
