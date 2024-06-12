@@ -144,6 +144,19 @@ REM set the varible %name% to the resolved repo.
         goto :print_repo_not_found
     )
     cd %REPO_LOCATION%
+    REM Check if config file exists before running
+    IF %name% == %CLARK_REPO_NAME% (
+        IF NOT EXIST "./src/config/config.json" (
+            set "location=%REPO_LOCATION%\src\config\"
+            goto :print_missing_config
+        )
+    )
+    IF %name% == %SCE_DISCORD_BOT_REPO_NAME% (
+        IF NOT EXIST "./config.json" (
+            set "location=%REPO_LOCATION%\"
+            goto :print_missing_config
+        )
+    )
     IF %name%==%SCE_DISCORD_BOT_REPO_NAME% (
         docker-compose -f docker-compose.yml up --build
         goto :exit_success
@@ -188,6 +201,13 @@ REM set the varible %name% to the resolved repo.
     echo.
     echo either link the repo with `sce link %name% or clone it first with sce link %name%.
     goto :exit_error 
+
+:print_missing_config
+    echo.
+    echo it seems like you forgot to create/configure the config.json file
+    echo follow the config.example.json as a template and add it at %location%
+    echo.
+    goto :exit_error
 
 :exit_error
     EXIT /B 1
