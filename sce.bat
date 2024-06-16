@@ -15,7 +15,6 @@ set CLEEZY_REPO_NAME=cleezy
 set QUASAR_REPO_NAME=Quasar
 set SCE_DISCORD_BOT_REPO_NAME=SCE-discord-bot
 set SCETA_REPO_NAME=SCEta
-
 REM parse the location where:
 REM 1. the `sce` command was ran from in the command line
 REM 2. the actual sce.bat script is located on the user's disk
@@ -145,17 +144,9 @@ REM set the varible %name% to the resolved repo.
     )
     cd %REPO_LOCATION%
     REM Check if config file exists before running
-    IF %name% == %CLARK_REPO_NAME% (
-        IF NOT EXIST "./src/config/config.json" (
-            set "location=%REPO_LOCATION%\src\config\"
-            goto :print_missing_config
-        )
-    )
-    IF %name% == %SCE_DISCORD_BOT_REPO_NAME% (
-        IF NOT EXIST "./config.json" (
-            set "location=%REPO_LOCATION%\"
-            goto :print_missing_config
-        )
+    CALL :check_config_file
+    IF errorlevel 1 (
+        goto :print_missing_config
     )
     IF %name%==%SCE_DISCORD_BOT_REPO_NAME% (
         docker-compose -f docker-compose.yml up --build
@@ -171,6 +162,24 @@ REM set the varible %name% to the resolved repo.
 :create_mongodb_user
     type %SCE_COMMAND_DIRECTORY%create_user.txt | docker exec -i sce-mongodb-dev mongosh --quiet --norc --shell
     goto :exit_success
+
+:check_config_file
+    SET CONFIG_LOCATION=""
+    IF %name% == %SCE_DISCORD_BOT_REPO_NAME% (
+        SET "CONFIG_LOCATION=config.json"
+    )
+    IF %name% == %CLARK_REPO_NAME% (
+        SET "CONFIG_LOCATION=src\config\config.json"
+    )
+    IF %name% == %QUASAR_REPO_NAME% (
+        SET "CONFIG_LOCATION=config\config.json"
+    )
+    IF NOT (CONFIG_LOCATION == "") (
+        IF NOT EXIST ".\%CONFIG_LOCATION%" (
+            EXIT /B 1
+        )
+    )
+    EXIT /B 0
 
 :print_command_usage
     echo usage: sce %1% {repo name}
@@ -203,9 +212,20 @@ REM set the varible %name% to the resolved repo.
     goto :exit_error 
 
 :print_missing_config
+    REM Get real path to config file from symlink
+    REM The below fsutil command prints out a bunch of stuff related to the 
+    REM The line we are looking for looks like this
+    REM Print Name:            E:\vs\temp2\Quasar
+    REM This line referes to the acutual directory location, and we want
+    REM to parse this line and tell the user where they need to make a config file
+    FOR /f "tokens=*" %%a IN ('fsutil reparsepoint QUERY %REPO_LOCATION% ^| FINDSTR "Print Name: "') DO (
+        SET "REAL_PATH=%%a"
+    )
+    SET "REAL_PATH=!REAL_PATH:Print Name:            =!"
+    SET FULL_MISSING_CONFIG_PATH=%REAL_PATH%\%CONFIG_LOCATION%
     echo.
     echo it seems like you forgot to create/configure the config.json file
-    echo follow the config.example.json as a template and add it at %location%
+    echo follow the config.example.json as a template and add it at %FULL_MISSING_CONFIG_PATH%
     echo.
     goto :exit_error
 
