@@ -202,6 +202,7 @@ REM set the varible %name% to the resolved repo.
     echo Clark:clark, clrk, ck, c
     echo MongoDB:mongo, db, mongodb
     echo Quasar:quasar, q, idsmile
+    echo Cleezy:cleezy url z
     echo SCE-discod-bot:sce-discord-bot, discord-bot, discord, bot, d
     echo SCEta:sceta, transit
     REM assumes this was printed when the user incorrectly used the command
