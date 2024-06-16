@@ -143,7 +143,9 @@ REM set the varible %name% to the resolved repo.
         goto :print_repo_not_found
     )
     cd %REPO_LOCATION%
-    REM Check if config file exists before running
+    REM The below calls on the code at the `check_config_file` label
+    REM and checks the exit status. If the exit status is 1, this means
+    REM we are missing a config file and should prompt the user to make it.
     CALL :check_config_file
     IF errorlevel 1 (
         goto :print_missing_config
