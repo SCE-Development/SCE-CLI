@@ -23,6 +23,14 @@ function print_usage {
     exit 1
 }
 
+function print_missing_config {
+    echo
+    echo it seems like you forgot to create/configure the config.json file
+    echo follow the config.example.json as a template and add it at $(readlink -f $REPO_LOCATION)/$configPath
+    echo
+    exit 1
+}
+
 function print_repo_not_found {
     echo it looks like you havent linked $1 to the sce tool.
     echo
@@ -57,6 +65,17 @@ function contains_element {
   shift
   for e; do [[ "$e" == "$match" ]] && return 0; done
   return 1
+}
+
+function contains_config {
+    if [ ! $configPath == "" ]
+    then
+        if [ ! -f $configPath ]
+        then
+            return 1
+        fi
+    fi
+    return 0
 }
 
 function is_quasar_alias {
@@ -122,16 +141,19 @@ then
 fi
 
 name=""
+configPath=""
 is_quasar_alias "$2"
 if [ $? -eq 0 ]
 then
     name=$QUASAR_REPO_NAME
+    configPath="config/config.json"
 fi
 
 is_clark_alias "$2"
 if [ $? -eq 0 ]
 then
     name=$CLARK_REPO_NAME
+    configPath="src/config/config.json"
 fi
 
 is_cleezy_alias "$2"
@@ -151,6 +173,7 @@ is_discord_bot_alias "$2"
 if [ $? -eq 0 ]
 then
     name=$SCE_DISCORD_BOT_REPO_NAME
+    configPath="config.json"
 fi
 
 is_sceta_alias "$2"
@@ -190,6 +213,11 @@ then
         print_repo_not_found $name
     fi
     cd $REPO_LOCATION
+    contains_config
+    if [ $? -eq 1 ]
+    then
+        print_missing_config $REPO_LOCATION $configPath
+    fi
     if [ $start_only_mongodb_container -eq 0 ]
     then
         docker-compose -f docker-compose.dev.yml up mongodb -d
