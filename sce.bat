@@ -153,6 +153,7 @@ REM set the varible %name% to the resolved repo.
     REM Check if config file exists before running
     CALL :check_config_file
     IF NOT "!MISSING_PATHS_LENGTH!"=="0" (
+
         goto :print_missing_config
     )
     IF %name%==%SCE_DISCORD_BOT_REPO_NAME% (
@@ -171,6 +172,7 @@ REM set the varible %name% to the resolved repo.
     goto :exit_success
 
 :check_config_file
+
     SET MISSING_PATHS_LENGTH=0
     FOR /L %%a IN (1,1,%CONFIG_LOCATION_LENGTH%) DO (
         IF NOT EXIST ".\!CONFIG_LOCATION[%%a]!" (
@@ -199,6 +201,7 @@ REM set the varible %name% to the resolved repo.
     echo Clark:clark, clrk, ck, c
     echo MongoDB:mongo, db, mongodb
     echo Quasar:quasar, q, idsmile
+    echo Cleezy:cleezy url z
     echo SCE-discod-bot:sce-discord-bot, discord-bot, discord, bot, d
     echo SCEta:sceta, transit
     REM assumes this was printed when the user incorrectly used the command
