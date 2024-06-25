@@ -61,6 +61,9 @@ REM set the varible %name% to the resolved repo.
     (for %%a in (%CLARK_OPTIONS%) do (
         if %repo_to_link% == %%a (
             SET name=%CLARK_REPO_NAME%
+            SET CONFIG_LOCATION[1]=src\config\config.json
+            SET CONFIG_LOCATION[2]=api\config\config.json
+            SET CONFIG_LOCATION_LENGTH=2
             goto :%1%
         )
     ))
@@ -80,12 +83,16 @@ REM set the varible %name% to the resolved repo.
     (for %%a in (%QUASAR_OPTIONS%) do (
         if %repo_to_link% == %%a (
             SET name=%QUASAR_REPO_NAME%
+            SET CONFIG_LOCATION[1]=config\config.json
+            SET CONFIG_LOCATION_LENGTH=1
             goto :%1%
         )
     ))
     (for %%a in (%DISCORD_BOT_OPTIONS%) do (
         if %repo_to_link% == %%a (
             SET name=%SCE_DISCORD_BOT_REPO_NAME%
+            SET CONFIG_LOCATION[1]=config.json
+            SET CONFIG_LOCATION_LENGTH=1
             goto :%1%
         )
     ))
@@ -145,7 +152,7 @@ REM set the varible %name% to the resolved repo.
     cd %REPO_LOCATION%
     REM Check if config file exists before running
     CALL :check_config_file
-    IF errorlevel 1 (
+    IF NOT "!MISSING_PATHS_LENGTH!"=="0" (
         goto :print_missing_config
     )
     IF %name%==%SCE_DISCORD_BOT_REPO_NAME% (
@@ -164,22 +171,14 @@ REM set the varible %name% to the resolved repo.
     goto :exit_success
 
 :check_config_file
-    SET CONFIG_LOCATION=""
-    IF %name% == %SCE_DISCORD_BOT_REPO_NAME% (
-        SET "CONFIG_LOCATION=config.json"
-    )
-    IF %name% == %CLARK_REPO_NAME% (
-        SET "CONFIG_LOCATION=src\config\config.json"
-    )
-    IF %name% == %QUASAR_REPO_NAME% (
-        SET "CONFIG_LOCATION=config\config.json"
-    )
-    IF NOT (CONFIG_LOCATION == "") (
-        IF NOT EXIST ".\%CONFIG_LOCATION%" (
-            EXIT /B 1
+    SET MISSING_PATHS_LENGTH=0
+    FOR /L %%a IN (1,1,%CONFIG_LOCATION_LENGTH%) DO (
+        IF NOT EXIST ".\!CONFIG_LOCATION[%%a]!" (
+            SET /A MISSING_PATHS_LENGTH+=1
+            SET MISSING_PATHS[!MISSING_PATHS_LENGTH!]=!CONFIG_LOCATION[%%a]!
         )
     )
-    EXIT /B 0
+    exit /B 0
 
 :print_command_usage
     echo usage: sce %1% {repo name}
@@ -222,10 +221,12 @@ REM set the varible %name% to the resolved repo.
         SET "REAL_PATH=%%a"
     )
     SET "REAL_PATH=!REAL_PATH:Print Name:            =!"
-    SET FULL_MISSING_CONFIG_PATH=%REAL_PATH%\%CONFIG_LOCATION%
     echo.
     echo it seems like you forgot to create/configure the config.json file
-    echo follow the config.example.json as a template and add it at %FULL_MISSING_CONFIG_PATH%
+    echo follow the config.example.json as a template and add it at the following paths:
+    FOR /L %%a IN (1,1,%MISSING_PATHS_LENGTH%) DO (
+        echo %REAL_PATH%\!MISSING_PATHS[%%a]!
+    )
     echo.
     goto :exit_error
 
