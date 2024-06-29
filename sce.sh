@@ -48,20 +48,36 @@ GITHUB_BASE_HTTP_URL="https://github.com/SCE-Development/"
 # git@github.com:SCE-Development/Clark.git
 GITHUB_BASE_SSH_URL="git@github.com:SCE-Development/"
 
-CLARK_REPO_NAME="Clark"
-CLEEZY_REPO_NAME="cleezy"
-QUASAR_REPO_NAME="Quasar"
-SCE_DISCORD_BOT_REPO_NAME="SCE-discord-bot"
-SCETA_REPO_NAME="SCEta"
+declare -A VALID_REPOS=(
+    ["clark"]="Clark"
+    ["dog"]="Clark"
+    ["clrk"]="Clark"
+    ["ck"]="Clark"
+    ["c"]="Clark"
+    ["cleezy"]="cleezy"
+    ["url"]="cleezy"
+    ["z"]="cleezy"
+    ["mongodb"]="Mongo"
+    ["mongo"]="Mongo"
+    ["db"]="Mongo"
+    ["quasar"]="Quasar"
+    ["idsmile"]="Quasar"
+    ["q"]="Quasar"
+    ["sce-discord-bot"]="SCE-discord-bot"
+    ["discord-bot"]="SCE-discord-bot"
+    ["discord"]="SCE-discord-bot"
+    ["bot"]="SCE-discord-bot"
+    ["d"]="SCE-discord-bot"
+)
 
-CLARK_NAMES=("clark" "dog" "clrk" "ck" "c")
-CLEEZY_NAMES=("cleezy" "url" "z")
-MONGODB_NAMES=("mongo" "db" "mongodb")
-QUASAR_NAMES=("quasar" "q" "idsmile")
-SCE_DISCORD_BOT_NAMES=("sce-discord-bot" "discord-bot" "discord" "bot" "d")
-SCETA_NAMES=("sceta" "transit")
-
-VALID_COMMANDS=("link" "clone" "run" "setup" "completion" "create")
+declare -A VALID_COMMANDS=(
+    ["link"]="help message"
+    ["clone"]="help message"
+    ["run"]="help message"
+    ["setup"]="help message"
+    ["completion"]="help message"
+    ["create"]="help message"
+)
 
 function contains_element {
   local e match="$1"
@@ -83,46 +99,9 @@ function contains_config {
     return 0
 }
 
-function is_quasar_alias {
-    result=$(contains_element "$1" "${QUASAR_NAMES[@]}")
-    return $result
-}
-
-function is_clark_alias {
-    result=$(contains_element "$1" "${CLARK_NAMES[@]}")
-    return $result
-}
-
-function is_cleezy_alias {
-    result=$(contains_element "$1" "${CLEEZY_NAMES[@]}")
-    return $result
-}
-
-function is_mongodb_alias {
-    result=$(contains_element "$1" "${MONGODB_NAMES[@]}")
-    return $result
-}
-
-function is_discord_bot_alias {
-    result=$(contains_element "$1" "${SCE_DISCORD_BOT_NAMES[@]}")
-    return $result
-}
-
-function is_sceta_alias {
-    result=$(contains_element "$1" "${SCETA_NAMES[@]}")
-    return $result
-}
-
-function is_valid_command {
-    result=$(contains_element "$1" "${VALID_COMMANDS[@]}")
-    return $result
-}
-
-is_valid_command "$1"
-if [ $? -eq 1 ] 
-then  
+# Checks for valid command
+if ! [[ -n "${VALID_COMMANDS[$1]}" ]]; then
     print_usage
-    exit 1
 fi
 
 if [ $1 == "completion" ]
@@ -148,49 +127,32 @@ fi
 name=""
 configPaths=()
 missingPaths=()
-is_quasar_alias "$2"
-if [ $? -eq 0 ]
-then
-    name=$QUASAR_REPO_NAME
-    configPaths+=("config/config.json")
+start_only_mongodb_container=1
+
+# Check for second parameter before proceeding
+if [ -z "$2" ]; then
+    print_usage
 fi
 
-is_clark_alias "$2"
-if [ $? -eq 0 ]
-then
-    name=$CLARK_REPO_NAME
-    configPaths+=("src/config/config.json")
-    configPaths+=("api/config/config.json")
-fi
+# Every key must have a value as -n checks if value is non-empty string 
+if [[ -n "${VALID_REPOS[$2]}" ]]; then
+    name=${VALID_REPOS[$2]}
 
-is_cleezy_alias "$2"
-if [ $? -eq 0 ]
-then
-    name=$CLEEZY_REPO_NAME
-fi
+    if [ $name == "Quasar" ]; then
+        configPaths+=("config/config.json")
 
-is_mongodb_alias "$2"
-start_only_mongodb_container=$?
-if [ $start_only_mongodb_container -eq 0 ]
-then
-    name=$CLARK_REPO_NAME
-fi
+    elif [ $name == "Clark" ]; then
+        configPaths+=("src/config/config.json")
+        configPaths+=("api/config/config.json")
 
-is_discord_bot_alias "$2"
-if [ $? -eq 0 ]
-then
-    name=$SCE_DISCORD_BOT_REPO_NAME
-    configPaths+=("config.json")
-fi
-
-is_sceta_alias "$2"
-if [ $? -eq 0 ]
-then
-    name=$SCETA_REPO_NAME
-fi
-
-if [ -z "$name" ]
-then
+    elif [ $name == "Mongo" ]; then
+        start_only_mongodb_container=0
+        name="Clark"
+        
+    elif [ $name == "SCE-discord-bot" ]; then
+        configPaths+=("config.json")
+    fi
+else
     print_usage
 fi
 
@@ -225,12 +187,12 @@ then
     then
         print_missing_config $REPO_LOCATION $missingPaths
     fi
-    if [ $start_only_mongodb_container -eq 0 ]
+    if [ $start_only_mongodb_container == 0 ]
     then
         docker-compose -f docker-compose.dev.yml up mongodb -d
         exit 0
     fi
-    if [ $name == $SCE_DISCORD_BOT_REPO_NAME ]
+    if [ $name == "SCE-discord-bot" ]
     then
         docker-compose up --build
         exit 0
