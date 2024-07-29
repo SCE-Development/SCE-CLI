@@ -71,12 +71,12 @@ declare -A VALID_REPOS=(
 )
 
 declare -A VALID_COMMANDS=(
-    ["link"]="help message"
-    ["clone"]="help message"
-    ["run"]="help message"
-    ["setup"]="help message"
-    ["completion"]="help message"
-    ["create"]="help message"
+    ["link"]=1
+    ["clone"]=1
+    ["run"]=1
+    ["setup"]=1
+    ["completion"]=1
+    ["create"]=1
 )
 
 function contains_element {
