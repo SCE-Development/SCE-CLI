@@ -216,5 +216,21 @@ if [ "${BASH_SOURCE[0]}" = "$0" ]; then
     fi
 
 else
-    echo "sourced"
+    function _sce {
+        local CURRENT_WORD=${COMP_WORDS[COMP_CWORD]}
+        local KEYSTRING
+        #builds a string with the keys from the arrays and sorts it
+        case $COMP_CWORD in
+            1)
+                KEYSTRING=$(echo "${!VALID_COMMANDS[@]}" | tr ' ' '\n' | sort -u)
+                ;;
+            2)
+                KEYSTRING=$(echo "${!VALID_REPOS[@]}" | tr ' ' '\n' | sort -u)
+                ;;
+        esac
+        #filters keys with current word/char for autocomplete
+        COMPREPLY=( $(compgen -W "$KEYSTRING" -- $CURRENT_WORD) )
+    }
+
+    complete -F _sce sce
 fi
