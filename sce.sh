@@ -99,104 +99,110 @@ function contains_config {
     return 0
 }
 
-# Checks for valid command
-if ! [[ -n "${VALID_COMMANDS[$1]}" ]]; then
-    print_usage
-fi
+# executes script when called instead of sourced
+if [ "${BASH_SOURCE[0]}" = "$0" ]; then
 
-if [ $1 == "completion" ]
-then
-    if [ -n "$FISH_VERSION" ]; then
-        # Fish shell detected
-        echo "function sce; bash $(pwd)/sce.sh \$argv; end"
+    # Checks for valid command
+    if ! [[ -n "${VALID_COMMANDS[$1]}" ]]; then
+        print_usage
+    fi
+
+    if [ $1 == "completion" ]
+    then
+        if [ -n "$FISH_VERSION" ]; then
+            # Fish shell detected
+            echo "function sce; bash $(pwd)/sce.sh \$argv; end"
+            exit 0
+        fi
+        # For other shells (Bash, Zsh, etc.)
+        echo "# for the sce dev tool"
+        echo "alias sce=\"$(pwd)/sce.sh\""
         exit 0
     fi
-    # For other shells (Bash, Zsh, etc.)
-    echo "# for the sce dev tool"
-    echo "alias sce=\"$(pwd)/sce.sh\""
-    echo ""
-    exit 0
-fi
 
-if [ $1 == "create" ]
-then
-    cat $SCE_COMMAND_DIRECTORY"create_user.txt" | docker exec -i sce-mongodb-dev mongosh --shell --norc --quiet
-    exit 0
-fi
-
-name=""
-configPaths=()
-missingPaths=()
-start_only_mongodb_container=1
-
-# Check for second parameter before proceeding
-if [ -z "$2" ]; then
-    print_usage
-fi
-
-# Every key must have a value as -n checks if value is non-empty string 
-if [[ -n "${VALID_REPOS[$2]}" ]]; then
-    name=${VALID_REPOS[$2]}
-
-    if [ $name == "Quasar" ]; then
-        configPaths+=("config/config.json")
-
-    elif [ $name == "Clark" ]; then
-        configPaths+=("src/config/config.json")
-        configPaths+=("api/config/config.json")
-
-    elif [ $name == "Mongo" ]; then
-        start_only_mongodb_container=1
-        name="Clark"
-        
-    elif [ $name == "SCE-discord-bot" ]; then
-        configPaths+=("config.json")
-    fi
-else
-    print_usage
-fi
-
-if [ $1 == "clone" ]
-then
-    # clone with the SSH URL if the user wanted to
-    # if the third argument is absent or anything else
-    # just default to the HTTPS url
-    if [[ ! -z "$3" ]] && [[ $3 == "--ssh" ]]
+    if [ $1 == "create" ]
     then
-        git clone "$GITHUB_BASE_SSH_URL$name.git"
+        cat $SCE_COMMAND_DIRECTORY"create_user.txt" | docker exec -i sce-mongodb-dev mongosh --shell --norc --quiet
+        exit 0
+    fi
+
+    name=""
+    configPaths=()
+    missingPaths=()
+    start_only_mongodb_container=1
+
+    # Check for second parameter before proceeding
+    if [ -z "$2" ]; then
+        print_usage
+    fi
+
+    # Every key must have a value as -n checks if value is non-empty string 
+    if [[ -n "${VALID_REPOS[$2]}" ]]; then
+        name=${VALID_REPOS[$2]}
+
+        if [ $name == "Quasar" ]; then
+            configPaths+=("config/config.json")
+
+        elif [ $name == "Clark" ]; then
+            configPaths+=("src/config/config.json")
+            configPaths+=("api/config/config.json")
+
+        elif [ $name == "Mongo" ]; then
+            start_only_mongodb_container=1
+            name="Clark"
+            
+        elif [ $name == "SCE-discord-bot" ]; then
+            configPaths+=("config.json")
+        fi
     else
-        git clone "$GITHUB_BASE_HTTP_URL$name.git"
+        print_usage
     fi
-    exit 0
-elif [ $1 == "link" ]
-then
-    sce_run_location=$(pwd)
-    # remove sim link if it exists, ignore any stderr/stdout
-    rm "$SCE_COMMAND_DIRECTORY$name" &> /dev/null
-    ln -s "$sce_run_location" "$SCE_COMMAND_DIRECTORY$name"
-elif [ $1 == "run" ]
-then
-    REPO_LOCATION="$SCE_COMMAND_DIRECTORY$name"
-    if [ ! -d "$REPO_LOCATION" ] 
+
+    if [ $1 == "clone" ]
     then
-        print_repo_not_found $name
-    fi
-    cd $REPO_LOCATION
-    contains_config $configPaths
-    if [ $? -eq 1 ]
+        # clone with the SSH URL if the user wanted to
+        # if the third argument is absent or anything else
+        # just default to the HTTPS url
+        if [[ ! -z "$3" ]] && [[ $3 == "--ssh" ]]
+        then
+            git clone "$GITHUB_BASE_SSH_URL$name.git"
+        else
+            git clone "$GITHUB_BASE_HTTP_URL$name.git"
+        fi
+        exit 0
+    elif [ $1 == "link" ]
     then
-        print_missing_config $REPO_LOCATION $missingPaths
-    fi
-    if [ $start_only_mongodb_container == 1 ]
+        sce_run_location=$(pwd)
+        # remove sim link if it exists, ignore any stderr/stdout
+        rm "$SCE_COMMAND_DIRECTORY$name" &> /dev/null
+        ln -s "$sce_run_location" "$SCE_COMMAND_DIRECTORY$name"
+    elif [ $1 == "run" ]
     then
-        docker-compose -f docker-compose.dev.yml up mongodb -d
+        REPO_LOCATION="$SCE_COMMAND_DIRECTORY$name"
+        if [ ! -d "$REPO_LOCATION" ] 
+        then
+            print_repo_not_found $name
+        fi
+        cd $REPO_LOCATION
+        contains_config $configPaths
+        if [ $? -eq 1 ]
+        then
+            print_missing_config $REPO_LOCATION $missingPaths
+        fi
+        if [ $start_only_mongodb_container == 1 ]
+        then
+            docker-compose -f docker-compose.dev.yml up mongodb -d
+            exit 0
+        fi
+        if [ $name == "SCE-discord-bot" ]
+        then
+            docker-compose up --build
+            exit 0
+        fi
+        docker-compose -f docker-compose.dev.yml up --build
         exit 0
     fi
-    if [ $name == "SCE-discord-bot" ]
-    then
-        docker-compose up --build
-        exit 0
-    fi
-    docker-compose -f docker-compose.dev.yml up --build
-    exit 0
+
+else
+    echo "sourced"
 fi
