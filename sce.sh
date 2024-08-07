@@ -146,7 +146,7 @@ if [[ -n "${VALID_REPOS[$2]}" ]]; then
         configPaths+=("api/config/config.json")
 
     elif [ $name == "Mongo" ]; then
-        start_only_mongodb_container=0
+        start_only_mongodb_container=1
         name="Clark"
         
     elif [ $name == "SCE-discord-bot" ]; then
@@ -187,7 +187,7 @@ then
     then
         print_missing_config $REPO_LOCATION $missingPaths
     fi
-    if [ $start_only_mongodb_container == 0 ]
+    if [ $start_only_mongodb_container == 1 ]
     then
         docker-compose -f docker-compose.dev.yml up mongodb -d
         exit 0
