@@ -115,8 +115,20 @@ if [ "${BASH_SOURCE[0]}" = "$0" ]; then
             exit 0
         fi
         # For other shells (Bash, Zsh, etc.)
-        echo "# for the sce dev tool"
-        echo "alias sce=\"$(pwd)/sce.sh\""
+        BASHRC_PATH="$HOME/.bashrc"
+        ALIAS_LINE="alias sce=\"$(pwd)/sce.sh\""
+        SOURCE_LINE="source $(pwd)/sce.sh"
+
+        # Check if alias line exists
+        if ! grep -Fxq "$ALIAS_LINE" "$BASHRC_PATH"; then
+            echo "# for the sce dev tool" >> "$BASHRC_PATH"
+            echo "$ALIAS_LINE" >> "$BASHRC_PATH"
+        fi
+
+        # Check if source line exists
+        if ! grep -Fxq "$SOURCE_LINE" "$BASHRC_PATH"; then
+            echo "$SOURCE_LINE" >> "$BASHRC_PATH"
+        fi
         exit 0
     fi
 
