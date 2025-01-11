@@ -3,6 +3,17 @@ Command line tool to run any of the SCE projects. Works on Windows, Mac and
  Linux. Available with the `sce` command.
 
 ## Setup
+⚠️ **IMPORTANT WARNING**: If your Windows username contains spaces (e.g. "John Smith"), DO NOT install this in your user directory. Follow these special instructions instead:
+1. Open File Explorer and go to the C: drive
+2. Create a new folder called `SCE`
+3. Open Command Prompt or PowerShell and run:
+```
+cd C:\SCE
+git clone https://github.com/SCE-Development/SCE-CLI.git
+```
+
+For users without spaces in their username, you can proceed with the normal installation:
+
 Before starting, be sure you have Docker installed! This tool
  runs SCE's projects with Docker.
 
