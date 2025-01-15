@@ -54,7 +54,7 @@ Alternatively, just run the command `sce` to see the usages in the terminal.
 The name of the repositories are (the nicknames are alternate names you can use in the command):
 core-v4 (nicknames: core-v4, corev4, cv4, c4, c) 
 quasar (nicknames: quasar, q, idsmile)
-sce-discord-bot (nicknames: sce-discord-bot, discord-bot, discord, bot, d)
+sarah (nicknames: sarah, sce-discord-bot, discord-bot, discord, bot, d)
 
 ### Clone
 To clone an SCE project from GitHub, simply enter
