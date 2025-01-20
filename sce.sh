@@ -6,7 +6,7 @@ function print_repo_nicknames {
     echo "Clark:clark, dog, clrk, ck, c"
     echo "MongoDB (must have clark installed and linked):mongo, db, mongodb"
     echo "Quasar:quasar, q, idsmile"
-    echo "SCE-discord-bot:sce-discord-bot, discord-bot, discord, bot, d"
+    echo "SCE-discord-bot:sarah, sce-discord-bot, discord-bot, discord, bot, d"
     echo "cleezy:cleezy url z"
     echo "sceta:sceta, transit"
 }
@@ -58,7 +58,7 @@ CLARK_NAMES=("clark" "dog" "clrk" "ck" "c")
 CLEEZY_NAMES=("cleezy" "url" "z")
 MONGODB_NAMES=("mongo" "db" "mongodb")
 QUASAR_NAMES=("quasar" "q" "idsmile")
-SCE_DISCORD_BOT_NAMES=("sce-discord-bot" "discord-bot" "discord" "bot" "d")
+SCE_DISCORD_BOT_NAMES=("sarah" "sce-discord-bot" "discord-bot" "discord" "bot" "s" "d")
 SCETA_NAMES=("sceta" "transit")
 
 VALID_COMMANDS=("link" "clone" "run" "setup" "completion" "create")
