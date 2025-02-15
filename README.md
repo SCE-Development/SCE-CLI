@@ -52,7 +52,11 @@ C:\Users\<username>\path\to\SCE-CLI\
 # for linux
 ./sce.sh completion >> ~/.bashrc
 
-# for mac
+# for mac, first run the below command
+echo $SHELL
+# if the above is /bin/bash
+./sce.sh completion >> ~/.bash_profile
+# if the above is /bin/zsh
 ./sce.sh completion >> ~/.zshrc
 ```
 3. After doing the above, making a new terminal and typing `sce` should work.
