@@ -230,11 +230,6 @@ then
         docker-compose -f docker-compose.dev.yml up mongodb -d
         exit 0
     fi
-    if [ $name == $SCE_DISCORD_BOT_REPO_NAME ]
-    then
-        docker-compose up --build
-        exit 0
-    fi
     docker-compose -f docker-compose.dev.yml up --build
     exit 0
 fi
