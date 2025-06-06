@@ -156,10 +156,6 @@ REM set the varible %name% to the resolved repo.
 
         goto :print_missing_config
     )
-    IF %name%==%SCE_DISCORD_BOT_REPO_NAME% (
-        docker-compose -f docker-compose.yml up --build
-        goto :exit_success
-    )
     IF %is_mongodb_alias%=="true" (
         docker-compose -f docker-compose.dev.yml up mongodb -d
         goto :exit_success
