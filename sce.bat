@@ -149,11 +149,42 @@ REM set the varible %name% to the resolved repo.
     IF NOT EXIST %REPO_LOCATION% (
         goto :print_repo_not_found
     )
-    REM Get real path from junction
-    FOR /F "tokens=2*" %%a IN ('fsutil reparsepoint query "%REPO_LOCATION%" ^| findstr "Print Name:"') DO (
-        SET "REAL_PATH=%%b"
+
+
+    REM change directory from junction path to actual/target path
+    REM fsutil reparsepoint query returns an output similar to below that we must parse through
+
+    REM Reparse Tag Value : 0xa0000003
+    REM Tag value: Microsoft
+    REM Tag value: Name Surrogate
+    REM Tag value: Mount Point
+    REM Substitue Name offset: 0
+    REM Substitue Name length: 68
+    REM Print Name offset:     70
+    REM Print Name Length:     60
+    REM Substitute Name:       \??\C:\path\to\Clark
+    REM Print Name:            C:\path\to\Clark
+    REM Reparse Data Length: 0x8c
+    REM Reparse Data:
+    REM 0000:  00 00 44 00 46 00 3c 00  5c 00 3f 00 3f 00 5c 00 
+    REM 0010:  43 00 3a 00 5c 00 55 00  73 00 65 00 72 00 73 00  
+    REM 0020:  5c 00 63 00 6a 00 6c 00  6f 00 75 00 5c 00 44 00 
+    REM 0030:  6f 00 63 00 75 00 6d 00  65 00 6e 00 74 00 73 00
+    REM 0040:  5c 00 43 00 6c 00 61 00  72 00 6b 00 00 00 43 00
+    REM 0050:  3a 00 5c 00 55 00 73 00  65 00 72 00 73 00 5c 00
+    REM 0060:  63 00 6a 00 6c 00 6f 00  75 00 5c 00 44 00 6f 00 
+    REM 0070:  63 00 75 00 6d 00 65 00  6e 00 74 00 73 00 5c 00 
+    REM 0080:  43 00 6c 00 61 00 72 00  6b 00 00 00   
+
+    REM get the line with the prefix "Print Name:            " and set it to REAL_PATH
+    FOR /f "tokens=* USEBACKQ" %%a IN (`fsutil reparsepoint query %REPO_LOCATION% ^| findstr "Print Name:"`) DO (
+        SET REAL_PATH=%%a
     )
+    REM remove the prefix "Print Name:            " from REAL_PATH leaving only the target path
+    SET "REAL_PATH=!REAL_PATH:Print Name:            =!"
+    REM change directory into the target path
     cd /d "!REAL_PATH!"
+
     REM Check if config file exists before running
     CALL :check_config_file
     IF NOT "!MISSING_PATHS_LENGTH!"=="0" (
