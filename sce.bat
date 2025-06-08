@@ -149,7 +149,11 @@ REM set the varible %name% to the resolved repo.
     IF NOT EXIST %REPO_LOCATION% (
         goto :print_repo_not_found
     )
-    cd %REPO_LOCATION%
+    REM Get real path from junction
+    FOR /F "tokens=2*" %%a IN ('fsutil reparsepoint query "%REPO_LOCATION%" ^| findstr "Print Name:"') DO (
+        SET "REAL_PATH=%%b"
+    )
+    cd /d "!REAL_PATH!"
     REM Check if config file exists before running
     CALL :check_config_file
     IF NOT "!MISSING_PATHS_LENGTH!"=="0" (
