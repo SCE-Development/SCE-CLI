@@ -142,6 +142,9 @@ fi
 if [ $1 == "create" ]
 then
     cat $SCE_COMMAND_DIRECTORY"create_user.txt" | docker exec -i sce-mongodb-dev mongosh --shell --norc --quiet
+    echo "created admin user for the SCE website with:"
+    echo "email:    test@one.sce"
+    echo "password: sce"
     exit 0
 fi
 

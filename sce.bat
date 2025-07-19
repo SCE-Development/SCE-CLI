@@ -165,6 +165,9 @@ REM set the varible %name% to the resolved repo.
 
 :create_mongodb_user
     type %SCE_COMMAND_DIRECTORY%create_user.txt | docker exec -i sce-mongodb-dev mongosh --quiet --norc --shell
+    echo created admin user for the SCE website with:
+    echo email:    test@one.sce
+    echo password: sce
     goto :exit_success
 
 :check_config_file
