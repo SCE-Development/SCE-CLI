@@ -18,6 +18,8 @@ function print_usage {
     echo "run: run the repo using docker"
     echo "link: tell the sce tool where to find the repo on your computer"
     echo "create: create a user for the SCE website"
+    echo "lint: [For Clark and Discord bot only] run eslint --fix on JavaScript/Node files."
+    echo "      Use this while the associated project is running with 'sce run PROJECT'."
     echo "setup: copy config.example.json in a repo to config.json"
     print_repo_nicknames
     exit 1
@@ -61,7 +63,7 @@ QUASAR_NAMES=("quasar" "q" "idsmile")
 SCE_DISCORD_BOT_NAMES=("sarah" "sce-discord-bot" "discord-bot" "discord" "bot" "s" "d")
 SCETA_NAMES=("sceta" "transit")
 
-VALID_COMMANDS=("link" "clone" "run" "setup" "completion" "create")
+VALID_COMMANDS=("link" "clone" "run" "setup" "completion" "create", "lint")
 
 function contains_element {
   local e match="$1"
@@ -235,4 +237,20 @@ then
     fi
     docker-compose -f docker-compose.dev.yml up --build
     exit 0
+elif [ $1 == "lint" ]
+then
+    if [ $name == $SCE_DISCORD_BOT_REPO_NAME ]
+    then
+        echo "npm run lint -- -c /sarah/.eslintrc.json --fix" | docker exec -i sarah "/bin/sh"
+        exit 0
+    fi
+
+    if [ $name == $CLARK_REPO_NAME ]
+    then
+        echo "npm run lint -- -c /frontend/.eslintrc.json --fix" | docker exec -i sce-frontend-dev "/bin/sh"
+        echo "npm run lint -- -c /app/.eslintrc.json --fix" | docker exec -i sce-main-endpoints-dev "/bin/sh"
+        echo "npm run lint -- -c /app/.eslintrc.json --fix" | docker exec -i sce-cloud-api-dev "/bin/sh"
+        exit 0
+    fi
 fi
+
