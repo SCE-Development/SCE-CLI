@@ -63,7 +63,7 @@ QUASAR_NAMES=("quasar" "q" "idsmile")
 SCE_DISCORD_BOT_NAMES=("sarah" "sce-discord-bot" "discord-bot" "discord" "bot" "s" "d")
 SCETA_NAMES=("sceta" "transit")
 
-VALID_COMMANDS=("link" "clone" "run" "setup" "completion" "create", "lint")
+VALID_COMMANDS=("link" "clone" "run" "setup" "completion" "create" "lint")
 
 function contains_element {
   local e match="$1"
