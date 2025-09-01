@@ -76,7 +76,7 @@ To clone an SCE project from GitHub, simply enter
 ```
 sce clone <project> [--ssh]
 ```
-The reposity will be cloned from wherever the command was ran.
+The repository will be cloned from wherever the command was ran.
 Project names can be `quasar`, `core-v4`, `discord` etc. See the above repo
  names section for all options.
 
