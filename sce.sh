@@ -17,7 +17,10 @@ function print_usage {
     echo "clone: clone the given repo from github."
     echo "run: run the repo using docker"
     echo "link: tell the sce tool where to find the repo on your computer"
-    echo "create: create a user for the SCE website"
+    echo "create: create a user for the SCE website."
+    echo "        optionally specify an access level: admin (default), officer, member,"
+    echo "        nonmember, pending, or banned."
+    echo "        example: sce create officer"
     echo "lint: [For Clark and Discord bot only] run eslint --fix on JavaScript/Node files."
     echo "      Use this while the associated project is running with 'sce run PROJECT'."
     echo "setup: copy config.example.json in a repo to config.json"
@@ -143,8 +146,34 @@ fi
 
 if [ $1 == "create" ]
 then
-    cat $SCE_COMMAND_DIRECTORY"create_user.txt" | docker exec -i sce-mongodb-dev mongosh --shell --norc --quiet
-    echo "created admin user for the SCE website with:"
+    access_level_name="${2:-admin}"
+    case "$access_level_name" in
+        admin)     access_level=3 ;;
+        officer)   access_level=2 ;;
+        member)    access_level=1 ;;
+        nonmember) access_level=0 ;;
+        pending)   access_level=-1 ;;
+        banned)    access_level=-2 ;;
+        *)
+            echo "unknown access level: $access_level_name"
+            echo "valid options: admin, officer, member, nonmember, pending, banned"
+            exit 1
+            ;;
+    esac
+
+    mongo_script="use sce_core
+        db.User.insertOne({
+            emailVerified: true,
+            accessLevel: $access_level,
+            pagesPrinted: 0,
+            password: '\$2a\$10\$HWbBiWRso1IUgqnuV6t1hO6lCBWO7KTC/E3G1MsFoXKH7/l/4FVK2',
+            firstName: 'Development',
+            lastName: 'Account',
+            email: 'test@one.sce',
+        })"
+
+    echo "$mongo_script" | docker exec -i sce-mongodb-dev mongosh --shell --norc --quiet
+    echo "created $access_level_name user for the SCE website with:"
     echo "email:    test@one.sce"
     echo "password: sce"
     exit 0
