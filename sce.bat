@@ -164,8 +164,33 @@ REM set the varible %name% to the resolved repo.
     goto :exit_success
 
 :create_mongodb_user
-    type %SCE_COMMAND_DIRECTORY%create_user.txt | docker exec -i sce-mongodb-dev mongosh --quiet --norc --shell
-    echo created admin user for the SCE website with:
+    SET access_level_name=%2%
+    IF "%access_level_name%"=="" SET access_level_name=admin
+
+    IF "%access_level_name%"=="admin" (SET access_level=3) ELSE ^
+    IF "%access_level_name%"=="officer" (SET access_level=2) ELSE ^
+    IF "%access_level_name%"=="member" (SET access_level=1) ELSE ^
+    IF "%access_level_name%"=="nonmember" (SET access_level=0) ELSE ^
+    IF "%access_level_name%"=="pending" (SET access_level=-1) ELSE ^
+    IF "%access_level_name%"=="banned" (SET access_level=-2) ELSE (
+        echo unknown access level: %access_level_name%
+        echo valid options: admin, officer, member, nonmember, pending, banned
+        goto :exit_error
+    )
+
+    (
+        echo use sce_core
+        echo db.User.insertOne({
+        echo     emailVerified: true,
+        echo     accessLevel: !access_level!,
+        echo     pagesPrinted: 0,
+        echo     password: '$2a$10$HWbBiWRso1IUgqnuV6t1hO6lCBWO7KTC/E3G1MsFoXKH7/l/4FVK2',
+        echo     firstName: 'Development',
+        echo     lastName: 'Account',
+        echo     email: 'test@one.sce',
+        echo })
+    ) | docker exec -i sce-mongodb-dev mongosh --quiet --norc --shell
+    echo created %access_level_name% user for the SCE website with:
     echo email:    test@one.sce
     echo password: sce
     goto :exit_success
@@ -191,6 +216,10 @@ REM set the varible %name% to the resolved repo.
     echo clone: clone the given repo from github.
     echo run: run the repo using docker
     echo link: tell the sce tool where to find the repo on your computer
+    echo create: create a user for the SCE website.
+    echo         optionally specify an access level: admin (default), officer, member,
+    echo         nonmember, pending, or banned.
+    echo         example: sce create officer
     echo setup: copy config.example.json in a repo to config.json
     goto :print_repo_nicknames
 
