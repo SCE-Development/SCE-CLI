@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/SCE-Development/SCE-CLI/internal"
 	"github.com/spf13/cobra"
 )
 
@@ -14,13 +15,13 @@ var lintCmd = &cobra.Command{
 	Short: "Run eslint --fix on running containers (Clark and SCE-discord-bot only)",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		repo, ok := resolveAlias(args[0])
+		repo, ok := internal.ResolveAlias(args[0])
 		if !ok {
 			fmt.Fprintf(os.Stderr, "unknown repo: %s\n", args[0])
 			os.Exit(1)
 		}
 
-		targets, ok := lintContainers[repo.RepoName]
+		targets, ok := internal.LintContainers[repo.RepoName]
 		if !ok {
 			fmt.Fprintf(os.Stderr, "lint is not supported for %s\n", repo.RepoName)
 			fmt.Fprintln(os.Stderr, "lint is only available for Clark and SCE-discord-bot.")

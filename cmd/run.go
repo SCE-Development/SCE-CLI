@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/SCE-Development/SCE-CLI/internal"
 	"github.com/spf13/cobra"
 )
 
@@ -14,13 +15,13 @@ var runCmd = &cobra.Command{
 	Short: "Run the repo using docker",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		repo, ok := resolveAlias(args[0])
+		repo, ok := internal.ResolveAlias(args[0])
 		if !ok {
 			fmt.Fprintf(os.Stderr, "unknown repo: %s\n", args[0])
 			os.Exit(1)
 		}
 
-		repoPath, err := getRepoPath(repo.RepoName)
+		repoPath, err := internal.GetRepoPath(repo.RepoName)
 		if err != nil {
 			fmt.Printf("it looks like you haven't linked %s to the sce tool.\n", repo.RepoName)
 			fmt.Println()
@@ -46,7 +47,7 @@ var runCmd = &cobra.Command{
 		composeCmd := dockerComposeCommand()
 
 		if repo.MongoDBOnly {
-			dockerCmd := exec.Command(composeCmd[0], append(composeCmd[1:], "-f", dockerComposeFile, "up", "mongodb", "-d")...)
+			dockerCmd := exec.Command(composeCmd[0], append(composeCmd[1:], "-f", internal.DockerComposeFile, "up", "mongodb", "-d")...)
 			dockerCmd.Dir = repoPath
 			dockerCmd.Stdout = os.Stdout
 			dockerCmd.Stderr = os.Stderr
@@ -54,7 +55,7 @@ var runCmd = &cobra.Command{
 				os.Exit(1)
 			}
 		} else {
-			dockerCmd := exec.Command(composeCmd[0], append(composeCmd[1:], "-f", dockerComposeFile, "up", "--build")...)
+			dockerCmd := exec.Command(composeCmd[0], append(composeCmd[1:], "-f", internal.DockerComposeFile, "up", "--build")...)
 			dockerCmd.Dir = repoPath
 			dockerCmd.Stdout = os.Stdout
 			dockerCmd.Stderr = os.Stderr

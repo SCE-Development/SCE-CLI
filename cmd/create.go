@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/SCE-Development/SCE-CLI/internal"
 	"github.com/spf13/cobra"
 )
 
@@ -23,11 +24,11 @@ Levels: admin (default), officer, member, nonmember, pending, banned.`,
 			levelName = args[0]
 		}
 
-		level, ok := accessLevels[levelName]
+		level, ok := internal.AccessLevels[levelName]
 		if !ok {
 			fmt.Fprintf(os.Stderr, "unknown access level: %s\n", levelName)
-			keys := make([]string, 0, len(accessLevels))
-			for k := range accessLevels {
+			keys := make([]string, 0, len(internal.AccessLevels))
+			for k := range internal.AccessLevels {
 				keys = append(keys, k)
 			}
 			fmt.Fprintf(os.Stderr, "valid options: %s\n", strings.Join(keys, ", "))
@@ -46,9 +47,9 @@ db.User.insertOne({
     firstName: 'Development',
     lastName: 'Account',
     email: '%s',
-})`, level, bcryptHash, email)
+})`, level, internal.BcryptHash, email)
 
-		dockerCmd := exec.Command("docker", "exec", "-i", mongoDBContainer, "mongosh", "--shell", "--norc", "--quiet")
+		dockerCmd := exec.Command("docker", "exec", "-i", internal.MongoDBContainer, "mongosh", "--shell", "--norc", "--quiet")
 		dockerCmd.Stdin = strings.NewReader(mongoScript)
 		dockerCmd.Stdout = os.Stdout
 		dockerCmd.Stderr = os.Stderr

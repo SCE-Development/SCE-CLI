@@ -1,16 +1,16 @@
-package cmd
+package internal
 
 const (
-	githubBaseHTTPURL = "https://github.com/SCE-Development/"
-	githubBaseSSHURL  = "git@github.com:SCE-Development/"
+	GithubBaseHTTPURL = "https://github.com/SCE-Development/"
+	GithubBaseSSHURL  = "git@github.com:SCE-Development/"
 
-	mongoDBContainer   = "sce-mongodb-dev"
-	dockerComposeFile  = "docker-compose.dev.yml"
+	MongoDBContainer  = "sce-mongodb-dev"
+	DockerComposeFile = "docker-compose.dev.yml"
 
-	bcryptHash = "$2a$10$HWbBiWRso1IUgqnuV6t1hO6lCBWO7KTC/E3G1MsFoXKH7/l/4FVK2"
+	BcryptHash = "$2a$10$HWbBiWRso1IUgqnuV6t1hO6lCBWO7KTC/E3G1MsFoXKH7/l/4FVK2"
 )
 
-var accessLevels = map[string]int{
+var AccessLevels = map[string]int{
 	"admin":     3,
 	"officer":   2,
 	"member":    1,
@@ -19,12 +19,12 @@ var accessLevels = map[string]int{
 	"banned":    -2,
 }
 
-type lintTarget struct {
+type LintTarget struct {
 	Container    string
 	EslintConfig string
 }
 
-var lintContainers = map[string][]lintTarget{
+var LintContainers = map[string][]LintTarget{
 	"Clark": {
 		{Container: "sce-frontend-dev", EslintConfig: "/frontend/.eslintrc.json"},
 		{Container: "sce-main-endpoints-dev", EslintConfig: "/app/.eslintrc.json"},

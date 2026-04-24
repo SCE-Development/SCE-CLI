@@ -1,4 +1,4 @@
-package cmd
+package internal
 
 type RepoInfo struct {
 	RepoName    string
@@ -43,12 +43,12 @@ var aliasMap = map[string]RepoInfo{
 	"transit": {RepoName: "SCEta"},
 }
 
-func resolveAlias(input string) (RepoInfo, bool) {
+func ResolveAlias(input string) (RepoInfo, bool) {
 	info, ok := aliasMap[input]
 	return info, ok
 }
 
-var repoNicknames = []string{
+var RepoNicknames = []string{
 	"Clark: clark, dog, clrk, ck, c",
 	"MongoDB (requires Clark linked): mongo, db, mongodb",
 	"Quasar: quasar, q, idsmile",

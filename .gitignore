@@ -10,6 +10,8 @@
 !go.sum
 !cmd/
 !cmd/**
+!internal/
+!internal/**
 !.goreleaser.yaml
 !.github/
 !.github/**

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/SCE-Development/SCE-CLI/internal"
 	"github.com/spf13/cobra"
 )
 
@@ -12,7 +13,7 @@ var linkCmd = &cobra.Command{
 	Short: "Tell the sce tool where to find the repo on your computer",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		repo, ok := resolveAlias(args[0])
+		repo, ok := internal.ResolveAlias(args[0])
 		if !ok {
 			fmt.Fprintf(os.Stderr, "unknown repo: %s\n", args[0])
 			os.Exit(1)
@@ -24,7 +25,7 @@ var linkCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		if err := createLink(repo.RepoName, cwd); err != nil {
+		if err := internal.CreateLink(repo.RepoName, cwd); err != nil {
 			fmt.Fprintf(os.Stderr, "error creating link: %v\n", err)
 			os.Exit(1)
 		}

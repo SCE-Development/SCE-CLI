@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/SCE-Development/SCE-CLI/internal"
 	"github.com/spf13/cobra"
 )
 
@@ -15,7 +16,7 @@ var cloneCmd = &cobra.Command{
 	Short: "Clone the given repo from GitHub",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		repo, ok := resolveAlias(args[0])
+		repo, ok := internal.ResolveAlias(args[0])
 		if !ok {
 			fmt.Fprintf(os.Stderr, "unknown repo: %s\n", args[0])
 			os.Exit(1)
@@ -23,9 +24,9 @@ var cloneCmd = &cobra.Command{
 
 		var url string
 		if sshFlag {
-			url = githubBaseSSHURL + repo.RepoName + ".git"
+			url = internal.GithubBaseSSHURL + repo.RepoName + ".git"
 		} else {
-			url = githubBaseHTTPURL + repo.RepoName + ".git"
+			url = internal.GithubBaseHTTPURL + repo.RepoName + ".git"
 		}
 
 		gitCmd := exec.Command("git", "clone", url)

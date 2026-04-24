@@ -1,4 +1,4 @@
-package cmd
+package internal
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 )
 
-func getCliDirectory() (string, error) {
+func GetCliDirectory() (string, error) {
 	exe, err := os.Executable()
 	if err != nil {
 		return "", err
@@ -18,8 +18,8 @@ func getCliDirectory() (string, error) {
 	return filepath.Dir(resolved), nil
 }
 
-func getRepoPath(repoName string) (string, error) {
-	cliDir, err := getCliDirectory()
+func GetRepoPath(repoName string) (string, error) {
+	cliDir, err := GetCliDirectory()
 	if err != nil {
 		return "", err
 	}
@@ -42,8 +42,8 @@ func getRepoPath(repoName string) (string, error) {
 	return linkPath, nil
 }
 
-func createLink(repoName string, targetDir string) error {
-	cliDir, err := getCliDirectory()
+func CreateLink(repoName string, targetDir string) error {
+	cliDir, err := GetCliDirectory()
 	if err != nil {
 		return err
 	}
