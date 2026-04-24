@@ -4,3 +4,12 @@
 !sce.bat
 !sce.sh
 !create_user.txt
+!LICENSE
+!main.go
+!go.mod
+!go.sum
+!cmd/
+!cmd/**
+!.goreleaser.yaml
+!.github/
+!.github/**
