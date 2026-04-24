@@ -178,6 +178,14 @@ REM set the varible %name% to the resolved repo.
         goto :exit_error
     )
 
+    SET "chars=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    SET "random_suffix="
+    FOR /L %%i IN (1,1,4) DO (
+        SET /A "idx=!RANDOM! %% 62"
+        FOR %%j IN (!idx!) DO SET "random_suffix=!random_suffix!!chars:~%%j,1!"
+    )
+    SET "generated_email=test_!random_suffix!@one.sce"
+
     (
         echo use sce_core
         echo db.User.insertOne({
@@ -187,11 +195,11 @@ REM set the varible %name% to the resolved repo.
         echo     password: '$2a$10$HWbBiWRso1IUgqnuV6t1hO6lCBWO7KTC/E3G1MsFoXKH7/l/4FVK2',
         echo     firstName: 'Development',
         echo     lastName: 'Account',
-        echo     email: 'test@one.sce',
+        echo     email: '!generated_email!',
         echo })
     ) | docker exec -i sce-mongodb-dev mongosh --quiet --norc --shell
     echo created %access_level_name% user for the SCE website with:
-    echo email:    test@one.sce
+    echo email:    !generated_email!
     echo password: sce
     goto :exit_success
 

@@ -161,6 +161,9 @@ then
             ;;
     esac
 
+    random_suffix=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | head -c 4)
+    generated_email="test_${random_suffix}@one.sce"
+
     mongo_script="use sce_core
         db.User.insertOne({
             emailVerified: true,
@@ -169,12 +172,12 @@ then
             password: '\$2a\$10\$HWbBiWRso1IUgqnuV6t1hO6lCBWO7KTC/E3G1MsFoXKH7/l/4FVK2',
             firstName: 'Development',
             lastName: 'Account',
-            email: 'test@one.sce',
+            email: '$generated_email',
         })"
 
     echo "$mongo_script" | docker exec -i sce-mongodb-dev mongosh --shell --norc --quiet
     echo "created $access_level_name user for the SCE website with:"
-    echo "email:    test@one.sce"
+    echo "email:    $generated_email"
     echo "password: sce"
     exit 0
 fi
