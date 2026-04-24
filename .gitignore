@@ -13,3 +13,4 @@
 !.goreleaser.yaml
 !.github/
 !.github/**
+!install.sh

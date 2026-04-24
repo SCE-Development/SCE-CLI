@@ -1,0 +1,25 @@
+version: 2
+
+builds:
+  - main: .
+    binary: sce
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - format: binary
+    name_template: "sce-{{ .Os }}-{{ .Arch }}"
+
+changelog:
+  use: github-native
+
+release:
+  make_latest: true
+  name_template: "v{{ .Version }}"
