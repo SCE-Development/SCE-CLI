@@ -14,3 +14,4 @@
 !.github/
 !.github/**
 !install.sh
+!install.ps1
