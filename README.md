@@ -12,7 +12,7 @@ Command line tool to run any of the SCE projects. Works on Windows, Mac and
 
 Install with one command:
 ```sh
-curl -sSL https://raw.githubusercontent.com/SCE-Development/SCE-CLI/master/install.sh | sh
+curl -sSL https://raw.githubusercontent.com/SCE-Development/SCE-CLI/master/go/install.sh | sh
 ```
 
 This downloads the correct binary for your system and installs it to `/usr/local/bin/sce`.
@@ -21,7 +21,7 @@ This downloads the correct binary for your system and installs it to `/usr/local
 
 Run in PowerShell:
 ```powershell
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/SCE-Development/SCE-CLI/master/install.ps1" -UseBasicParsing | Invoke-Expression
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/SCE-Development/SCE-CLI/master/go/install.ps1" -UseBasicParsing | Invoke-Expression
 ```
 
 ### Verify

@@ -5,15 +5,7 @@
 !sce.sh
 !create_user.txt
 !LICENSE
-!main.go
-!go.mod
-!go.sum
-!cmd/
-!cmd/**
-!internal/
-!internal/**
-!.goreleaser.yaml
+!go/
+!go/**
 !.github/
 !.github/**
-!install.sh
-!install.ps1
