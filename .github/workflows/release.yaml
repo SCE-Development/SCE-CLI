@@ -23,6 +23,11 @@ jobs:
       - name: Set version from commit count
         run: echo "GORELEASER_CURRENT_TAG=v0.$(git rev-list --count HEAD)" >> $GITHUB_ENV
 
+      - name: Create and push tag
+        run: |
+          git tag "$GORELEASER_CURRENT_TAG"
+          git push origin "$GORELEASER_CURRENT_TAG"
+
       - uses: goreleaser/goreleaser-action@v6
         with:
           version: latest
