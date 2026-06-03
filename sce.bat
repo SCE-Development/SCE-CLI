@@ -274,4 +274,3 @@ REM set the varible %name% to the resolved repo.
 
 :exit_success
     EXIT /B 0
-    
