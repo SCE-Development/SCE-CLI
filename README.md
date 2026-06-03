@@ -2,117 +2,96 @@
 Command line tool to run any of the SCE projects. Works on Windows, Mac and
  Linux. Available with the `sce` command.
 
+## Prerequisites
+
+- [Docker](https://www.docker.com/)
+
 ## Setup
-⚠️ **IMPORTANT WARNING**: If your Windows username contains spaces (e.g. "John Smith"), DO NOT install this in your user directory. Follow these special instructions instead:
-1. Open File Explorer and go to the C: drive
-2. Create a new folder called `SCE`
-3. Open Command Prompt or PowerShell and run:
-```
-cd C:\SCE
-git clone https://github.com/SCE-Development/SCE-CLI.git
-```
-
-For users without spaces in their username, you can proceed with the normal installation:
-
-Before starting, be sure you have Docker installed! This tool
- runs SCE's projects with Docker.
-
-Clone this repository to your computer with
-```
-git clone https://github.com/SCE-Development/SCE-CLI.git
-```
-Next, we will add the `sce` command to your terminal.
-
-### Windows
-You will need to add the location where the batch file is to your path. To do
- this:
-1. Copy the path where `SCE-CLI` is installed. The path should look like
-```
-C:\Users\<username>\path\to\SCE-CLI\
-```
-2. We need to edit (your env vars or something) we can do this with:
-- Press `Window + R` to open the Windows Run prompt.
-- Type in `sysdm.cpl` and click `OK`.
-![image](https://phoenixnap.com/kb/wp-content/uploads/2021/04/setting-environment-variables-in-windows-06.png)
-- Then go to the `Advanced` tab and click `Environment Variables`:
-![image](https://phoenixnap.com/kb/wp-content/uploads/2021/04/setting-environment-variables-in-windows-07.png)
-- Click on path in `System variables`
-![edit_path](https://user-images.githubusercontent.com/10038262/180634975-6a7c7947-5560-4df6-bd5a-3d8bda033c70.png)
-- Add the location where `SCE-CLI` is installed from earlier into
- this path (see highlighted)
-![path](https://user-images.githubusercontent.com/10038262/180634962-abd4ba91-30a2-47e7-8c50-4cc26a41b669.png)
-3. After doing so, typing `sce` in the Command Prompt
- should work, and the help page should show like below:
-![eb2015026b076e7b31a8caa2ff8f2e55](https://user-images.githubusercontent.com/10038262/180635207-2ea70c08-003f-4f59-95f8-35817bc6a51b.png)
 
 ### Mac/Linux
-1. cd into the `SCE-CLI`
-2. Add an alias to your terminals config file like:
-```sh
-# for linux
-./sce.sh completion >> ~/.bashrc
 
-# for mac, first run the below command
-echo $SHELL
-# if the above is /bin/bash
-./sce.sh completion >> ~/.bash_profile
-# if the above is /bin/zsh
-./sce.sh completion >> ~/.zshrc
+Install with one command:
+```sh
+curl -sSL https://raw.githubusercontent.com/SCE-Development/SCE-CLI/master/go/install.sh | sh
 ```
-3. After doing the above, making a new terminal and typing `sce` should work.
+
+This downloads the correct binary for your system and installs it to `/usr/local/bin/sce`.
+
+### Windows
+
+Run in PowerShell:
+```powershell
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/SCE-Development/SCE-CLI/master/go/install.ps1" -UseBasicParsing | Invoke-Expression
+```
+
+### Verify
+
+After installing, open a new terminal and run:
+```
+sce --help
+```
 
 ## Usage
-To use the script, you use the command `sce` with a command and repo name
-The commands that you can run are: clone, link, run.
-Alternatively, just run the command `sce` to see the usages in the terminal.
+Use the command `sce` with a command and repo name.
+Run `sce --help` to see all available commands.
+
 ### Repo Names
-The name of the repositories are (the nicknames are alternate names you can use in the command):
-core-v4 (nicknames: core-v4, corev4, cv4, c4, c) 
-quasar (nicknames: quasar, q, idsmile)
-sarah (nicknames: sarah, sce-discord-bot, discord-bot, discord, bot, s, d)
+Each repo has nicknames you can use interchangeably:
+
+| Repo | Nicknames |
+|------|-----------|
+| Clark | clark, dog, clrk, ck, c |
+| MongoDB | mongo, db, mongodb |
+| Quasar | quasar, q, idsmile |
+| SCE-discord-bot | sarah, sce-discord-bot, discord-bot, discord, bot, s, d |
+| cleezy | cleezy, url, z |
+| SCEta | sceta, transit |
 
 ### Clone
-To clone an SCE project from GitHub, simply enter
+Clone an SCE project from GitHub:
 ```
 sce clone <project> [--ssh]
 ```
-The repository will be cloned from wherever the command was ran.
-Project names can be `quasar`, `core-v4`, `discord` etc. See the above repo
- names section for all options.
-
-The `--ssh` parameter can be optionally added after the project name.
- Supplying this will clone the repo with the GitHub SSH URL over the
- HTTPS one.
+The `--ssh` flag clones using the SSH URL instead of HTTPS.
 
 ### Link
-To link a sce repo to your directory where you are running the command, simply enter
+Link a repo directory to the sce tool (run from inside the repo):
 ```
 sce link <project>
 ```
-Project names can be `quasar`, `core-v4`, `discord` etc. See the above repo
- names section for all options.
 
 ### Run
-To run an SCE project, simply enter
-
+Run an SCE project with Docker:
 ```
 sce run <project>
 ```
-where project can be `quasar`, `core-v4`, `discord` etc. See the above repo
- names section for all options.
-
-### Create
-This will create a test account when running the SCE website locally. Before running,
- make sure you have MongoDB running with:
+To start only MongoDB:
 ```
 sce run db
 ```
-Then, run the below command:
+
+### Setup
+Copy config.example.json to config.json for a project:
 ```
-sce create
+sce setup <project>
 ```
-After running the SCE website locally, ensure you can log in with the email
- `test@one.sce` and password `sce`
 
+### Create
+Create a test account for the SCE website. Make sure MongoDB is running first:
+```
+sce run db
+```
+Then create a user:
+```
+sce create [level]
+```
+Levels: `admin` (default), `officer`, `member`, `nonmember`, `pending`, `banned`.
 
+Log in with the generated email and password `sce`.
 
+### Lint
+Run eslint --fix on running containers (Clark and SCE-discord-bot only):
+```
+sce lint <project>
+```
+Make sure the project is running with `sce run` first.

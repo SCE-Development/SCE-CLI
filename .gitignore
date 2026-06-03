@@ -4,3 +4,8 @@
 !sce.bat
 !sce.sh
 !create_user.txt
+!LICENSE
+!go/
+!go/**
+!.github/
+!.github/**
