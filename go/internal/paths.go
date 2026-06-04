@@ -6,24 +6,20 @@ import (
 	"path/filepath"
 )
 
-func GetCliDirectory() (string, error) {
-	exe, err := os.Executable()
+func GetLinkDirectory() (string, error) {
+	home, err := os.UserHomeDir()
 	if err != nil {
 		return "", err
 	}
-	resolved, err := filepath.EvalSymlinks(exe)
-	if err != nil {
-		return "", err
-	}
-	return filepath.Dir(resolved), nil
+	return filepath.Join(home, ".sce"), nil
 }
 
 func GetRepoPath(repoName string) (string, error) {
-	cliDir, err := GetCliDirectory()
+	linkDir, err := GetLinkDirectory()
 	if err != nil {
 		return "", err
 	}
-	linkPath := filepath.Join(cliDir, repoName)
+	linkPath := filepath.Join(linkDir, repoName)
 
 	info, err := os.Lstat(linkPath)
 	if err != nil {
@@ -43,11 +39,14 @@ func GetRepoPath(repoName string) (string, error) {
 }
 
 func CreateLink(repoName string, targetDir string) error {
-	cliDir, err := GetCliDirectory()
+	linkDir, err := GetLinkDirectory()
 	if err != nil {
 		return err
 	}
-	linkPath := filepath.Join(cliDir, repoName)
+	if err := os.MkdirAll(linkDir, 0755); err != nil {
+		return err
+	}
+	linkPath := filepath.Join(linkDir, repoName)
 
 	// Remove existing symlink if present
 	os.Remove(linkPath)
