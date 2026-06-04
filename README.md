@@ -95,3 +95,9 @@ Run eslint --fix on running containers (Clark and SCE-discord-bot only):
 sce lint <project>
 ```
 Make sure the project is running with `sce run` first.
+
+### Update
+Update the SCE CLI to the latest version. Runs the appropriate install script for your platform:
+```
+sce update
+```
