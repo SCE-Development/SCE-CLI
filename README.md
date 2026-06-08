@@ -101,3 +101,6 @@ Update the SCE CLI to the latest version. Runs the appropriate install script fo
 ```
 sce update
 ```
+
+## Legacy Implementation
+The previous version of the SCE-CLI is deprecated as of June 2026. However, it is still available through this repository: see `sce.sh` for MacOS/Linux and `sce.bat` for Windows. Installation is discouraged as these versions are no longer maintained.
