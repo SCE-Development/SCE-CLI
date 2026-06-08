@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'go/**'
 
 permissions:
   contents: write
@@ -21,7 +23,7 @@ jobs:
           go-version-file: go/go.mod
 
       - name: Set version from commit count
-        run: echo "GORELEASER_CURRENT_TAG=v0.$(git rev-list --count HEAD)" >> $GITHUB_ENV
+        run: echo "GORELEASER_CURRENT_TAG=v0.$(git rev-list --count HEAD -- go/)" >> $GITHUB_ENV
 
       - name: Create and push tag
         run: |
