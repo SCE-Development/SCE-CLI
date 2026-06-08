@@ -102,5 +102,21 @@ Update the SCE CLI to the latest version. Runs the appropriate install script fo
 sce update
 ```
 
+## Running the CLI Locally
+There are two options to run the CLI locally:
+### Build and Run
+This option first builds the code into a binary, then runs the binary. Faster run but slower build.
+```bash
+go build -o sce . # Build
+./sce <subcommand> # Run
+```
+### Run (standalone)
+This option builds and runs in one step. Slower run, but no explicit build required.   
+```bash
+go run . <subcommand>
+```
+
+
+
 ## Legacy Implementation
 The previous version of the SCE-CLI is deprecated as of June 2026. However, it is still available through this repository: see `sce.sh` for MacOS/Linux and `sce.bat` for Windows. Installation is discouraged as these versions are no longer maintained.
