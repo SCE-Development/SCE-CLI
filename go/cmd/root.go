@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/SCE-Development/SCE-CLI/internal"
 	"github.com/spf13/cobra"
@@ -31,11 +32,14 @@ var rootCmd = &cobra.Command{
 		if skipVersionCheck[cmd.Name()] {
 			return
 		}
-		latest := internal.LatestRelease()
-		if latest == "" || latest == currentVersion {
+		// release tags are prefixed with a v (v0.5) but goreleaser strips it
+		// from the injected version (0.5), so compare without the prefix.
+		latest := strings.TrimPrefix(internal.LatestRelease(), "v")
+		current := strings.TrimPrefix(currentVersion, "v")
+		if latest == "" || latest == current {
 			return
 		}
-		fmt.Fprintf(os.Stderr, "your cli is outdated (%s → %s). run `sce update` to get the latest version\n\n", currentVersion, latest)
+		fmt.Fprintf(os.Stderr, "your cli is outdated (%s → %s). run `sce update` to get the latest version\n\n", current, latest)
 	},
 }
 
